@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "dwis.openlab.adcs.app": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
