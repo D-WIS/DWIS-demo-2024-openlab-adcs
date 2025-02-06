@@ -10,17 +10,32 @@ public class openLabADCS : IHostedService
 
     public DCS DrillingControlSystem { get; set; }
 
-    public LowLevelInterfaceInSignals LowLevelInterfaceInSignals { get; set; }
-    public LowLevelInterfaceOutSignals LowLevelInterfaceOutSignals { get; set; }
+    public LowLevelInterfaceInSignals LowLevelInterfaceInSignals { get; set; } = new LowLevelInterfaceInSignals();
+    public LowLevelInterfaceOutSignals LowLevelInterfaceOutSignals { get; set; } = new LowLevelInterfaceOutSignals();   
 
     private AcquiredSignals? _acquiredDrillerSignals;
+    private string _drillerTOSVelocitySPTag;
+    private string _drillerRotationSPTag;
+    private string _drillerCirculationSPTag;
 
-
-    public openLabADCS(IOPCUADWISClient dwisClient, ILogger<openLabADCS>? logger, AcquiredSignals? acquiredDrillerSignals)
+    public openLabADCS(IOPCUADWISClient dwisClient,ILoggerFactory? loggerFactory, AcquiredSignals? acquiredDrillerSignals, string drillerTosvSPTag, string drillerRotSPTag, string drillerCircSPTag)
     {
         _dwisClient = dwisClient;
-        _logger = logger;
+        _logger = loggerFactory != null ?  loggerFactory.CreateLogger<openLabADCS>() : null;
         _acquiredDrillerSignals = acquiredDrillerSignals;
+
+        _drillerTOSVelocitySPTag = drillerTosvSPTag;
+        _drillerRotationSPTag = drillerRotSPTag;
+        _drillerCirculationSPTag = drillerCircSPTag;
+
+        MachineLimits hoistingLimits = new MachineLimits() { MachineMaximumSetPoint = 5, MachineMinimumSetPoint = -5, MachineMaximumRateOfChangeSetPoint = .05, MachineMinimumRateOfChangeSetPoint = -0.5 };
+        MachineLimits rotationLimits = new MachineLimits() {MachineMaximumSetPoint = 5, MachineMinimumSetPoint = -1, MachineMaximumRateOfChangeSetPoint = .5, MachineMinimumRateOfChangeSetPoint = -1 };
+        MachineLimits circulationLimits = new MachineLimits() { MachineMaximumSetPoint = 5000.0 / 60000.0, MachineMinimumSetPoint = -0.0001, MachineMaximumRateOfChangeSetPoint = 50.0 / 60000.0, MachineMinimumRateOfChangeSetPoint = -50.0 / 60000.0 };
+        //DrillingControlSystem = new DCS(dwisClient, new RigMachineLimits(), )
+        RigMachineLimits limits = new RigMachineLimits(hoistingLimits, rotationLimits, circulationLimits);
+
+        DrillingControlSystem = new DCS(limits, loggerFactory);
+
         Initialize();
     }
 
@@ -56,13 +71,13 @@ public class openLabADCS : IHostedService
     {
         cancellationToken.Register(OnCancellationRequested);
 
+        _logger?.LogInformation("Start the DCS");
+        _ = Task.Run(()=> DrillingControlSystem.Start(cancellationToken));
 
         var outProperties = typeof(LowLevelInterfaceOutSignals).GetProperties();
 
-        PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromMicroseconds(50));
-        string TopOfStringVelocitySetPoint = "";
-        string FlowRateInSetPoint = "";
-        string SurfaceRPMSetPoint = "";
+        PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromMilliseconds(50));
+     
         while (await timer.WaitForNextTickAsync())
         {
             bool hoistingRequested, circulationRequested, rotationRequested;
@@ -97,35 +112,42 @@ public class openLabADCS : IHostedService
                 actualCirculationSpeed = LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured;
             }
 
+            DrillingControlSystem.DrawworkController.SetActualValue(actualHoistingSpeed);
+            DrillingControlSystem.TopdriveController.SetActualValue(actualRotationSpeed);
+            DrillingControlSystem.MudpumpsController.SetActualValue(actualCirculationSpeed);
 
             LowLevelInterfaceOutSignals.HoistingControlGranted = hoistingRequested;//make more advanced, with validation.
             LowLevelInterfaceOutSignals.RotationControlGranted = rotationRequested;
             LowLevelInterfaceOutSignals.CirculationControlGranted = circulationRequested;
 
 
-            if (_acquiredDrillerSignals[TopOfStringVelocitySetPoint].Any())
-            {
-                drillerHoistingSpeed = _acquiredDrillerSignals[TopOfStringVelocitySetPoint][0].GetValue<double>();
-            }
-            if (_acquiredDrillerSignals[SurfaceRPMSetPoint].Any())
-            {
-                drillerRotationSpeed = _acquiredDrillerSignals[SurfaceRPMSetPoint][0].GetValue<double>();
-            }
-            if (_acquiredDrillerSignals[FlowRateInSetPoint].Any())
-            {
-                drillerCirculationSpeed = _acquiredDrillerSignals[FlowRateInSetPoint][0].GetValue<double>();
-            }
 
+
+
+
+            if (_acquiredDrillerSignals[_drillerTOSVelocitySPTag].Any())
+            {
+                drillerHoistingSpeed = _acquiredDrillerSignals[_drillerTOSVelocitySPTag][0].GetValue<double>();
+            }
+            if (_acquiredDrillerSignals[_drillerRotationSPTag].Any())
+            {
+                drillerRotationSpeed = _acquiredDrillerSignals[_drillerRotationSPTag][0].GetValue<double>();
+            }
+            if (_acquiredDrillerSignals[_drillerCirculationSPTag].Any())
+            {
+                drillerCirculationSpeed = _acquiredDrillerSignals[_drillerCirculationSPTag][0].GetValue<double>();
+            }
+            //hoisting
             if (LowLevelInterfaceOutSignals.HoistingControlGranted)
             {
                 DrillingControlSystem.DrawworkController.SetSetPoint(requestedHoistingSpeed);
                 if (actualHoistingSpeed > requestedHoistingSpeed)
                 {
-                    DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint(requestedHoistingAccelerationLimit);
+                    DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint(-requestedHoistingAccelerationLimit);
                 }
                 else
                 { 
-                    DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint(- requestedHoistingAccelerationLimit);
+                    DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint( requestedHoistingAccelerationLimit);
                 }
             }
             else
@@ -133,6 +155,49 @@ public class openLabADCS : IHostedService
                 DrillingControlSystem.DrawworkController.SetSetPoint(drillerHoistingSpeed);
                 DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint(double.NaN);
             }
+            //rotation
+            if (LowLevelInterfaceOutSignals.RotationControlGranted)
+            {
+                DrillingControlSystem.TopdriveController.SetSetPoint(requestedRotationSpeed);
+                if (actualRotationSpeed > requestedRotationSpeed)
+                {
+                    DrillingControlSystem.TopdriveController.SetRateOfChangeSetPoint(-requestedRotationAccelerationLimit);
+                }
+                else
+                {
+                    DrillingControlSystem.TopdriveController.SetRateOfChangeSetPoint(requestedRotationAccelerationLimit);
+                }
+            }
+            else
+            {
+                DrillingControlSystem.TopdriveController.SetSetPoint(drillerRotationSpeed);
+                DrillingControlSystem.TopdriveController.SetRateOfChangeSetPoint(double.NaN);
+            }
+
+            //circulation
+            if (LowLevelInterfaceOutSignals.CirculationControlGranted)
+            {
+                DrillingControlSystem.MudpumpsController.SetSetPoint(requestedCirculationSpeed);
+                if (actualCirculationSpeed > requestedCirculationSpeed)
+                {
+                    DrillingControlSystem.MudpumpsController.SetRateOfChangeSetPoint(-requestedCirculationAccelerationLimit);
+                }
+                else
+                {
+                    DrillingControlSystem.MudpumpsController.SetRateOfChangeSetPoint(requestedCirculationAccelerationLimit);
+                }
+            }
+            else
+            {
+                DrillingControlSystem.MudpumpsController.SetSetPoint(drillerCirculationSpeed);
+                DrillingControlSystem.MudpumpsController.SetRateOfChangeSetPoint(double.NaN);
+            }
+
+
+
+
+
+
 
             LowLevelInterfaceOutSignals.ActualHoistingSpeedSetPoint = DrillingControlSystem.DrawworkController.GetSetPoint();
             LowLevelInterfaceOutSignals.ActualRotationSpeedSetPoint = DrillingControlSystem.TopdriveController.GetSetPoint();
@@ -164,6 +229,11 @@ public class openLabADCS : IHostedService
 
         var resIn = _dwisClient.Inject(manifestIn);
         var resOut = _dwisClient.Inject(manifestOut);
+
+        string json = ManifestInjectionResult.ToJsonString(resIn);
+        System.IO.File.WriteAllText("signalsInInjectionResults.json", json);
+        json = ManifestInjectionResult.ToJsonString(resOut);
+        System.IO.File.WriteAllText("signalsOutInjectionResults.json", json);
 
         var subData = resIn.ProvidedVariables.Select(pv => (pv.InjectedID.NameSpaceIndex, pv.InjectedID.ID,(object) typeof(LowLevelInterfaceInSignals).GetProperty(pv.ManifestItemID)!)).ToArray();
 

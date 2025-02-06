@@ -1,0 +1,213 @@
+{
+  "Success": true,
+  "InjectedVariableNamespace": "urn:norce:dwis:DDHUB",
+  "InjectedNodesNamespace": "http://ddhub.no/LowLevelInterfaceInSignals/",
+  "ProvidedVariablesNamespace": "http://ddhub.no/LowLevelInterfaceInSignals/Variables/",
+  "InjectedVariables": null,
+  "InjectedNodes": null,
+  "ProvidedVariables": [
+    {
+      "ManifestItemID": "RequestControlHoisting",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestControlHoisting"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedHoistingSpeed",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedHoistingSpeed"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedHoistingAccelerationLimit",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedHoistingAccelerationLimit"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedZeroWOB",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedZeroWOB"
+      }
+    },
+    {
+      "ManifestItemID": "HoistingHearbeat",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.HoistingHearbeat"
+      }
+    },
+    {
+      "ManifestItemID": "MaxRefreshDelayHoistingHeartbeat",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.MaxRefreshDelayHoistingHeartbeat"
+      }
+    },
+    {
+      "ManifestItemID": "HoistingSMMDelay",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.HoistingSMMDelay"
+      }
+    },
+    {
+      "ManifestItemID": "HoistingSMMAccelerationLimit",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.HoistingSMMAccelerationLimit"
+      }
+    },
+    {
+      "ManifestItemID": "HoistingSMMVelocityLimit",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.HoistingSMMVelocityLimit"
+      }
+    },
+    {
+      "ManifestItemID": "HoistingSMMDisplacementRequest",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.HoistingSMMDisplacementRequest"
+      }
+    },
+    {
+      "ManifestItemID": "RequestControlRotation",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestControlRotation"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedRotationSpeed",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedRotationSpeed"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedRotationAccelerationLimit",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedRotationAccelerationLimit"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedMaxTorqueLimit",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedMaxTorqueLimit"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedZeroTorque",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedZeroTorque"
+      }
+    },
+    {
+      "ManifestItemID": "RotationHeartBeat",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RotationHeartBeat"
+      }
+    },
+    {
+      "ManifestItemID": "MaxRefreshDelayRotationHeartbeat",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.MaxRefreshDelayRotationHeartbeat"
+      }
+    },
+    {
+      "ManifestItemID": "RotationSMMDelay",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RotationSMMDelay"
+      }
+    },
+    {
+      "ManifestItemID": "RotationSMMAccelerationLimit",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RotationSMMAccelerationLimit"
+      }
+    },
+    {
+      "ManifestItemID": "RotationSMMSpeedRequest",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RotationSMMSpeedRequest"
+      }
+    },
+    {
+      "ManifestItemID": "RequestControlCirculation",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestControlCirculation"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedCirculationFlowRate",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedCirculationFlowRate"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedCirculationAccelerationLimit",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedCirculationAccelerationLimit"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedOpenIBOP",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.RequestedOpenIBOP"
+      }
+    },
+    {
+      "ManifestItemID": "CirculationHeartBeat",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.CirculationHeartBeat"
+      }
+    },
+    {
+      "ManifestItemID": "MaxRefreshDelayCirculationHeartbeat",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.MaxRefreshDelayCirculationHeartbeat"
+      }
+    },
+    {
+      "ManifestItemID": "CirculationSMMDelay",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.CirculationSMMDelay"
+      }
+    },
+    {
+      "ManifestItemID": "CirculationSMMAccelerationLimit",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.CirculationSMMAccelerationLimit"
+      }
+    },
+    {
+      "ManifestItemID": "CirculationSMMSpeedRequest",
+      "InjectedID": {
+        "NameSpaceIndex": 8,
+        "ID": "LowLevelInterfaceInSignals.CirculationSMMSpeedRequest"
+      }
+    }
+  ]
+}

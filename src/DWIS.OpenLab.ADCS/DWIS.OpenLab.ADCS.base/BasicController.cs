@@ -2,7 +2,6 @@
 
 public class BasicController
 {
-    private IOPCUADWISClient _dwisClient;
     private ILogger<BasicController>? _logger;
     private object _lock = new object();
     public string Name { get; private set; }
@@ -24,15 +23,14 @@ public class BasicController
 
     private MachineLimits _machineLimits;
 
-    public BasicController(IOPCUADWISClient dwisClient, MachineLimits machineLimits, ILogger<BasicController>? logger, string name)
+    public BasicController( MachineLimits machineLimits, ILogger<BasicController>? logger, string name)
     {
-        _dwisClient = dwisClient;
         _machineLimits = machineLimits;
         _logger = logger;
         Name = name;
     }
 
-    internal void SetActualValue(double val)
+    public void SetActualValue(double val)
     {
         lock (_lock) { _actualValue = val; }
     }

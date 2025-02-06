@@ -1,0 +1,290 @@
+{
+  "Success": true,
+  "InjectedVariableNamespace": "urn:norce:dwis:DDHUB",
+  "InjectedNodesNamespace": "http://ddhub.no/LowLevelInterfaceOutSignals/",
+  "ProvidedVariablesNamespace": "http://ddhub.no/LowLevelInterfaceOutSignals/Variables/",
+  "InjectedVariables": null,
+  "InjectedNodes": null,
+  "ProvidedVariables": [
+    {
+      "ManifestItemID": "HoistingControlGranted",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.HoistingControlGranted"
+      }
+    },
+    {
+      "ManifestItemID": "ActualHoistingSpeedSetPoint",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ActualHoistingSpeedSetPoint"
+      }
+    },
+    {
+      "ManifestItemID": "ActualHoistingSpeedMeasured",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ActualHoistingSpeedMeasured"
+      }
+    },
+    {
+      "ManifestItemID": "MeasuredHookload",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MeasuredHookload"
+      }
+    },
+    {
+      "ManifestItemID": "MeasuredSWOB",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MeasuredSWOB"
+      }
+    },
+    {
+      "ManifestItemID": "SWOBTaring",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.SWOBTaring"
+      }
+    },
+    {
+      "ManifestItemID": "ToolJoint1Elevation",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ToolJoint1Elevation"
+      }
+    },
+    {
+      "ManifestItemID": "ToolJoint2Elevation",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ToolJoint2Elevation"
+      }
+    },
+    {
+      "ManifestItemID": "ToolJoint3Elevation",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ToolJoint3Elevation"
+      }
+    },
+    {
+      "ManifestItemID": "ToolJoint4Elevation",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ToolJoint4Elevation"
+      }
+    },
+    {
+      "ManifestItemID": "ToolJoint1AtMaxDrillElevation",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ToolJoint1AtMaxDrillElevation"
+      }
+    },
+    {
+      "ManifestItemID": "TooLowElevationAlarm",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.TooLowElevationAlarm"
+      }
+    },
+    {
+      "ManifestItemID": "TooHighElevationAlarm",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.TooHighElevationAlarm"
+      }
+    },
+    {
+      "ManifestItemID": "HoistingHeartBeat",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.HoistingHeartBeat"
+      }
+    },
+    {
+      "ManifestItemID": "MaxHoistingRefreshDelay",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MaxHoistingRefreshDelay"
+      }
+    },
+    {
+      "ManifestItemID": "RotationControlGranted",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.RotationControlGranted"
+      }
+    },
+    {
+      "ManifestItemID": "RotationSystemConnected",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.RotationSystemConnected"
+      }
+    },
+    {
+      "ManifestItemID": "ActualRotationSpeedSetPoint",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ActualRotationSpeedSetPoint"
+      }
+    },
+    {
+      "ManifestItemID": "ActualRotationSpeedMeasured",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ActualRotationSpeedMeasured"
+      }
+    },
+    {
+      "ManifestItemID": "MeasuredRotationTorque",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MeasuredRotationTorque"
+      }
+    },
+    {
+      "ManifestItemID": "ActualMaxRotationTorqueLimit",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ActualMaxRotationTorqueLimit"
+      }
+    },
+    {
+      "ManifestItemID": "ZeroTorqueInProgress",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ZeroTorqueInProgress"
+      }
+    },
+    {
+      "ManifestItemID": "RotationHeartBeat",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.RotationHeartBeat"
+      }
+    },
+    {
+      "ManifestItemID": "MaxRotationRefreshDelay",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MaxRotationRefreshDelay"
+      }
+    },
+    {
+      "ManifestItemID": "CirculationControlGranted",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.CirculationControlGranted"
+      }
+    },
+    {
+      "ManifestItemID": "ActualCirculationSpeedSetPoint",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ActualCirculationSpeedSetPoint"
+      }
+    },
+    {
+      "ManifestItemID": "ActualCirculationSpeedMeasured",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured"
+      }
+    },
+    {
+      "ManifestItemID": "MeasuredStandPipePressure",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MeasuredStandPipePressure"
+      }
+    },
+    {
+      "ManifestItemID": "OpeniBOPCommand",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.OpeniBOPCommand"
+      }
+    },
+    {
+      "ManifestItemID": "OpeniBOPStatus",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.OpeniBOPStatus"
+      }
+    },
+    {
+      "ManifestItemID": "CirculationHeartBeat",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.CirculationHeartBeat"
+      }
+    },
+    {
+      "ManifestItemID": "MaxCirculationRefreshDelay",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MaxCirculationRefreshDelay"
+      }
+    },
+    {
+      "ManifestItemID": "SlipsControlGranted",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.SlipsControlGranted"
+      }
+    },
+    {
+      "ManifestItemID": "ActualSlipsState",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.ActualSlipsState"
+      }
+    },
+    {
+      "ManifestItemID": "SlipsHeartBeat",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.SlipsHeartBeat"
+      }
+    },
+    {
+      "ManifestItemID": "MaxSlipsRefreshDelay",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MaxSlipsRefreshDelay"
+      }
+    },
+    {
+      "ManifestItemID": "RequestedMessageAccepted",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.RequestedMessageAccepted"
+      }
+    },
+    {
+      "ManifestItemID": "FixedMessage",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.FixedMessage"
+      }
+    },
+    {
+      "ManifestItemID": "MessageHeartBeat",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MessageHeartBeat"
+      }
+    },
+    {
+      "ManifestItemID": "MaxMessageRefreshDelay",
+      "InjectedID": {
+        "NameSpaceIndex": 10,
+        "ID": "LowLevelInterfaceOutSignals.MaxMessageRefreshDelay"
+      }
+    }
+  ]
+}

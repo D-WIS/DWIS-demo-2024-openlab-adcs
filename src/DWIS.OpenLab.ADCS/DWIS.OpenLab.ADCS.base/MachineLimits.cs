@@ -2,9 +2,13 @@
 
 public struct MachineLimits
 {
-    public double MachineMinimumSetPoint { get; }
-    public double MachineMaximumSetPoint { get; }
+    public double MachineMinimumSetPoint { get; set; }
+    public double MachineMaximumSetPoint { get; set; }
 
-    public double MachineMaximumRateOfChangeSetPoint { get; }
-    public double MachineMinimumRateOfChangeSetPoint { get; }
+    public double MachineMaximumRateOfChangeSetPoint { get; set; }
+    public double MachineMinimumRateOfChangeSetPoint { get; set; }
+
+
+
+
 }
