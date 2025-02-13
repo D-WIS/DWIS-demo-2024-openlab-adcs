@@ -77,7 +77,12 @@ public class openLabADCS : IHostedService
         var outProperties = typeof(LowLevelInterfaceOutSignals).GetProperties();
 
         PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromMilliseconds(50));
-     
+
+        bool wobTaraCommand = false;
+        bool tobTaraCommand = false;
+        double taraHookload = double.NaN;
+        double taraSurfaceTorque = double.NaN;
+
         while (await timer.WaitForNextTickAsync())
         {
             bool hoistingRequested, circulationRequested, rotationRequested;
@@ -88,8 +93,11 @@ public class openLabADCS : IHostedService
             drillerHoistingSpeed = drillerCirculationSpeed = drillerRotationSpeed = 0;
 
             double actualHoistingSpeed, actualRotationSpeed, actualCirculationSpeed;
-
+            double tj1;
             
+            bool inComingWOBTaraCommand, inComingTOBTaraCommand;
+            double hookload, sft;
+
             lock (LowLevelInterfaceInSignals) 
             {
                 hoistingRequested = LowLevelInterfaceInSignals.RequestControlHoisting;
@@ -103,6 +111,9 @@ public class openLabADCS : IHostedService
                 requestedHoistingAccelerationLimit = LowLevelInterfaceInSignals.RequestedHoistingAccelerationLimit;
                 requestedRotationAccelerationLimit = LowLevelInterfaceInSignals.RequestedRotationAccelerationLimit;
                 requestedCirculationAccelerationLimit = LowLevelInterfaceInSignals.RequestedCirculationAccelerationLimit;
+
+                inComingWOBTaraCommand = LowLevelInterfaceInSignals.RequestedZeroWOB;
+                inComingTOBTaraCommand = LowLevelInterfaceInSignals.RequestedZeroTorque;
             }
 
             lock (LowLevelInterfaceOutSignals) 
@@ -110,7 +121,24 @@ public class openLabADCS : IHostedService
                 actualHoistingSpeed = LowLevelInterfaceOutSignals.ActualHoistingSpeedMeasured;
                 actualRotationSpeed = LowLevelInterfaceOutSignals.ActualRotationSpeedMeasured;
                 actualCirculationSpeed = LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured;
+                hookload = LowLevelInterfaceOutSignals.MeasuredHookload;
+                sft = LowLevelInterfaceOutSignals.MeasuredRotationTorque;
+                tj1 = LowLevelInterfaceOutSignals.ToolJoint1Elevation;
             }
+
+            if (inComingWOBTaraCommand && !wobTaraCommand)
+            {
+                taraHookload = hookload;
+            }
+            if (inComingTOBTaraCommand && !tobTaraCommand) 
+            {
+                taraSurfaceTorque = sft;
+            }
+
+            wobTaraCommand = inComingTOBTaraCommand;
+            tobTaraCommand = inComingTOBTaraCommand;
+
+            LowLevelInterfaceOutSignals.MeasuredSWOB = taraHookload - hookload;
 
             DrillingControlSystem.DrawworkController.SetActualValue(actualHoistingSpeed);
             DrillingControlSystem.TopdriveController.SetActualValue(actualRotationSpeed);
@@ -119,10 +147,6 @@ public class openLabADCS : IHostedService
             LowLevelInterfaceOutSignals.HoistingControlGranted = hoistingRequested;//make more advanced, with validation.
             LowLevelInterfaceOutSignals.RotationControlGranted = rotationRequested;
             LowLevelInterfaceOutSignals.CirculationControlGranted = circulationRequested;
-
-
-
-
 
 
             if (_acquiredDrillerSignals[_drillerTOSVelocitySPTag].Any())
@@ -193,16 +217,18 @@ public class openLabADCS : IHostedService
                 DrillingControlSystem.MudpumpsController.SetRateOfChangeSetPoint(double.NaN);
             }
 
-
-
-
-
-
-
             LowLevelInterfaceOutSignals.ActualHoistingSpeedSetPoint = DrillingControlSystem.DrawworkController.GetSetPoint();
             LowLevelInterfaceOutSignals.ActualRotationSpeedSetPoint = DrillingControlSystem.TopdriveController.GetSetPoint();
             LowLevelInterfaceOutSignals.ActualCirculationSpeedSetPoint= DrillingControlSystem.MudpumpsController.GetSetPoint();
-            
+            tj1 -= .5;
+            lock (LowLevelInterfaceOutSignals)
+            {
+                LowLevelInterfaceOutSignals.ToolJoint1Elevation = tj1;
+            }
+
+            LowLevelInterfaceOutSignals.ToolJoint2Elevation = tj1 - 10.0;
+            LowLevelInterfaceOutSignals.ToolJoint3Elevation = tj1 - 20.0;
+            LowLevelInterfaceOutSignals.ToolJoint4Elevation = tj1 - 29.0;
 
             DateTime now = DateTime.Now;
             List<(string, object, DateTime)> writeData;
