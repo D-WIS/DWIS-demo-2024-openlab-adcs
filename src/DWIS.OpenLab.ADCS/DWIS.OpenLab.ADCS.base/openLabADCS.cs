@@ -83,8 +83,32 @@ public class openLabADCS : IHostedService
         double taraHookload = double.NaN;
         double taraSurfaceTorque = double.NaN;
 
+        bool circulationHeartBeatLastUpdate = false;
+        bool rotationHeartBeatLastUpdate = false;
+        bool hoistingHeartBeatLastUpdate = false;
+        bool slipsHeartBeatLastUpdate = false;
+        bool messageHeartBeatLastUpdate = false;
+        DateTime circulationLastUpdate = DateTime.UtcNow;
+        DateTime rotationLastUpdate = DateTime.UtcNow;
+        DateTime hoistingLastUpdate = DateTime.UtcNow;
+        DateTime slipsLastUpdate = DateTime.UtcNow;
+        DateTime messageLastUpdate = DateTime.UtcNow;
+        TimeSpan circulationMaxRefreshInterval = TimeSpan.FromSeconds(5);
+        TimeSpan rotationMaxRefreshInterval = TimeSpan.FromSeconds(5);
+        TimeSpan hoistingMaxRefreshInterval = TimeSpan.FromSeconds(5);
+        TimeSpan slipsMaxRefreshInterval = TimeSpan.FromSeconds(5);
+        TimeSpan messageMaxRefreshInterval = TimeSpan.FromSeconds(5);
+
+        TimeSpan lostCommunicationMessageMaxRefreshInterval = TimeSpan.FromSeconds(5);
+        DateTime circulationLostCommunicationLastUpdate = DateTime.MinValue;
+        DateTime rotationLostCommunicationLastUpdate = DateTime.MinValue;
+        DateTime hoistingLostCommunicationLastUpdate = DateTime.MinValue;
+        DateTime slipsLostCommunicationLastUpdate = DateTime.MinValue;
+        DateTime messageLostCommunicationLastUpdate = DateTime.MinValue;
+
         while (await timer.WaitForNextTickAsync())
         {
+            DateTime now = DateTime.UtcNow;
             bool hoistingRequested, circulationRequested, rotationRequested;
 
             double requestedHoistingSpeed,requestedRotationSpeed, requestedCirculationSpeed,  requestedHoistingAccelerationLimit, requestedRotationAccelerationLimit, requestedCirculationAccelerationLimit;
@@ -97,6 +121,15 @@ public class openLabADCS : IHostedService
             
             bool inComingWOBTaraCommand, inComingTOBTaraCommand;
             double hookload, sft;
+            bool circulationHeartBeat, rotationHeartBeat, hoistHeartBeat, slipsHeartBeat, messageHeartBeat;
+            lock (LowLevelInterfaceOutSignals)
+            {
+                circulationHeartBeat = LowLevelInterfaceOutSignals.CirculationHeartBeat;
+                rotationHeartBeat = LowLevelInterfaceOutSignals.RotationHeartBeat;
+                hoistHeartBeat = LowLevelInterfaceOutSignals.HoistingHeartBeat;
+                slipsHeartBeat = LowLevelInterfaceOutSignals.SlipsHeartBeat;
+                messageHeartBeat = LowLevelInterfaceOutSignals.MessageHeartBeat;
+            }
 
             lock (LowLevelInterfaceInSignals) 
             {
@@ -116,6 +149,138 @@ public class openLabADCS : IHostedService
                 inComingTOBTaraCommand = LowLevelInterfaceInSignals.RequestedZeroTorque;
             }
 
+            bool circulationLostCommunication = false;
+            bool rotationLostCommunication = false;
+            bool hoistingLostCommunication = false;
+            bool slipsLostCommunication = false;
+            bool messageLostCommunication = false;
+            lock (LowLevelInterfaceInSignals)
+            {
+                if (LowLevelInterfaceInSignals.CirculationHeartBeat != circulationHeartBeatLastUpdate)
+                {
+                    circulationHeartBeatLastUpdate = LowLevelInterfaceInSignals.CirculationHeartBeat;
+                    circulationLastUpdate = now;
+                }
+
+                if (LowLevelInterfaceInSignals.RotationHeartBeat != rotationHeartBeatLastUpdate)
+                {
+                    rotationHeartBeatLastUpdate = LowLevelInterfaceInSignals.RotationHeartBeat;
+                    rotationLastUpdate = now;
+                }
+                if (LowLevelInterfaceInSignals.HoistingHearbeat != hoistingHeartBeatLastUpdate)
+                {
+                    hoistingHeartBeatLastUpdate = LowLevelInterfaceInSignals.HoistingHearbeat;
+                    hoistingLastUpdate = now;
+                }
+                //if (LowLevelInterfaceInSignals.SlipsHeartBeat != slipsHeartBeatLastUpdate)
+                //{
+                //    slipsHeartBeatLastUpdate = LowLevelInterfaceInSignals.SlipsHeartBeat;
+                //    slipsLastUpdate = now;
+                //}
+                //if (LowLevelInterfaceInSignals.MessageHeartBeat != messageHeartBeatLastUpdate)
+                //{
+                //    messageHeartBeatLastUpdate = LowLevelInterfaceInSignals.MessageHeartBeat;
+                //    messageLastUpdate = now;
+                //}
+            }
+            TimeSpan elapsed = now - circulationLastUpdate;
+            circulationLostCommunication = elapsed > circulationMaxRefreshInterval;
+            elapsed = now - rotationLastUpdate;
+            rotationLostCommunication = elapsed > rotationMaxRefreshInterval;
+            elapsed = now - hoistingLastUpdate;
+            hoistingLostCommunication = elapsed > hoistingMaxRefreshInterval;
+            // elapsed = now - slipsLastUpdate;
+            // slipsLostCommunication = elapsed > slipsMaxRefreshInterval;
+            // elapsed = now - messageLastUpdate;
+            // messageLostCommunication = elapsed > messageMaxRefreshInterval;
+
+            if (circulationLostCommunication)
+            {
+                if (now - circulationLostCommunicationLastUpdate > lostCommunicationMessageMaxRefreshInterval)
+                {
+                    _logger?.LogWarning("Lost communication with circulation system for more than " + circulationMaxRefreshInterval.TotalSeconds + " s.");
+                    circulationLostCommunicationLastUpdate = now;
+                }
+                lock (LowLevelInterfaceOutSignals) 
+                {
+                    if (LowLevelInterfaceOutSignals.CirculationControlGranted)
+                    {
+                        _logger?.LogWarning("Apply circulation SMM.");
+                        LowLevelInterfaceOutSignals.CirculationControlGranted = false;
+                        // ApplyCirculationSMM();
+                    }
+                }
+            }
+            else
+            {
+                circulationLostCommunicationLastUpdate = DateTime.MinValue;
+            }
+            if (rotationLostCommunication)
+            {
+                if (now - rotationLostCommunicationLastUpdate > lostCommunicationMessageMaxRefreshInterval)
+                {
+                    _logger?.LogWarning("Lost communication with rotation system for more than " + rotationMaxRefreshInterval.TotalSeconds + " s.");
+                    rotationLostCommunicationLastUpdate = now;
+                }
+                lock (LowLevelInterfaceOutSignals)
+                {
+                    if (LowLevelInterfaceOutSignals.RotationControlGranted)
+                    {
+                        _logger?.LogWarning("Apply rotation SMM.");
+                        LowLevelInterfaceOutSignals.RotationControlGranted = false;
+                        // ApplyRotationSMM();
+                    }
+                }
+            }
+            else
+            {
+                rotationLostCommunicationLastUpdate = DateTime.MinValue;
+            }
+            if (hoistingLostCommunication)
+            {
+                if (now - hoistingLostCommunicationLastUpdate > lostCommunicationMessageMaxRefreshInterval)
+                {
+                    _logger?.LogWarning("Lost communication with hoisting system for more than " + hoistingMaxRefreshInterval.TotalSeconds + " s.");
+                    hoistingLostCommunicationLastUpdate = now;
+                }
+                lock (LowLevelInterfaceOutSignals)
+                {
+                    if (LowLevelInterfaceOutSignals.HoistingControlGranted)
+                    {
+                        _logger?.LogWarning("Apply hoisting SMM.");
+                        LowLevelInterfaceOutSignals.HoistingControlGranted = false;
+                        // ApplyHoistingSMM();
+                    }
+                }
+            }
+            else
+            {
+                hoistingLostCommunicationLastUpdate = DateTime.MinValue;
+            }
+            if (slipsLostCommunication)
+            {
+                if (now - slipsLostCommunicationLastUpdate > lostCommunicationMessageMaxRefreshInterval)
+                {
+                    _logger?.LogWarning("Lost communication with slips system for more than " + slipsMaxRefreshInterval.TotalSeconds + " s.");
+                    slipsLostCommunicationLastUpdate = now;
+                }
+            }
+            else
+            {
+                slipsLostCommunicationLastUpdate = DateTime.MinValue;
+            }
+            if (messageLostCommunication)
+            {
+                if (now - messageLostCommunicationLastUpdate > lostCommunicationMessageMaxRefreshInterval)
+                {
+                    _logger?.LogWarning("Lost communication with message system for more than " + messageMaxRefreshInterval.TotalSeconds + " s.");
+                    messageLostCommunicationLastUpdate = now;
+                }
+            }
+            else
+            {
+                messageLostCommunicationLastUpdate = DateTime.MinValue;
+            }
             lock (LowLevelInterfaceOutSignals) 
             {
                 actualHoistingSpeed = LowLevelInterfaceOutSignals.ActualHoistingSpeedMeasured;
@@ -144,9 +309,9 @@ public class openLabADCS : IHostedService
             DrillingControlSystem.TopdriveController.SetActualValue(actualRotationSpeed);
             DrillingControlSystem.MudpumpsController.SetActualValue(actualCirculationSpeed);
 
-            LowLevelInterfaceOutSignals.HoistingControlGranted = hoistingRequested;//make more advanced, with validation.
-            LowLevelInterfaceOutSignals.RotationControlGranted = rotationRequested;
-            LowLevelInterfaceOutSignals.CirculationControlGranted = circulationRequested;
+            LowLevelInterfaceOutSignals.HoistingControlGranted = hoistingRequested && !hoistingLostCommunication;//make more advanced, with validation.
+            LowLevelInterfaceOutSignals.RotationControlGranted = rotationRequested && !rotationLostCommunication;
+            LowLevelInterfaceOutSignals.CirculationControlGranted = circulationRequested && !circulationLostCommunication;
 
 
             if (_acquiredDrillerSignals[_drillerTOSVelocitySPTag].Any())
@@ -230,7 +395,16 @@ public class openLabADCS : IHostedService
             LowLevelInterfaceOutSignals.ToolJoint3Elevation = tj1 - 20.0;
             LowLevelInterfaceOutSignals.ToolJoint4Elevation = tj1 - 29.0;
 
-            DateTime now = DateTime.Now;
+            lock (LowLevelInterfaceOutSignals)
+            {
+                LowLevelInterfaceOutSignals.CirculationHeartBeat = !circulationHeartBeat;
+                LowLevelInterfaceOutSignals.RotationHeartBeat = !rotationHeartBeat;
+                LowLevelInterfaceOutSignals.HoistingHeartBeat = !hoistHeartBeat;
+                LowLevelInterfaceOutSignals.SlipsHeartBeat = !slipsHeartBeat;
+                LowLevelInterfaceOutSignals.MessageHeartBeat = !messageHeartBeat;
+            }
+
+            now = DateTime.Now;
             List<(string, object, DateTime)> writeData;
             lock (LowLevelInterfaceOutSignals)
             {
