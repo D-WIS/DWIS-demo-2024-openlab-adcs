@@ -12,8 +12,8 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
         private ILogger<LowLevelInterfaceClient>? _logger;
 
         private Lock _lock = new Lock();
-        
-        private LowLevelInterfaceOutSignals _lowLevelInterfaceOutSignals;
+
+        private LowLevelInterfaceOutSignals _lowLevelInterfaceOutSignals = new LowLevelInterfaceOutSignals();
 
         private static PropertyInfo[] _allOutProps = typeof(LowLevelInterfaceOutSignals).GetProperties();
 
@@ -66,7 +66,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             _lock.Enter();
             foreach (var prop in _allOutProps) 
             {
-                prop.SetValue(prop.GetValue(_lowLevelInterfaceOutSignals), res);
+                prop.SetValue(res, prop.GetValue(_lowLevelInterfaceOutSignals));
             }
             _lock.Exit();
             return res;
@@ -86,9 +86,9 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
                 _lock.Enter();
                 foreach (var change in changes)
                 {
-                    if (change != null && change.UserData is PropertyInfo prop) 
+                    if (change != null && change.Value != null && change.UserData is PropertyInfo prop ) 
                     {
-                        prop.SetValue(change.Value, _lowLevelInterfaceOutSignals);
+                        prop.SetValue(_lowLevelInterfaceOutSignals, change.Value);
                     }
                 }
                 _lock.Exit();
@@ -100,7 +100,14 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             Type type = typeof(LowLevelInterfaceInSignals); 
             foreach (var iv in inSignalsInjectionResults.ProvidedVariables) 
             {
-                _inSignalsDictionary.Add(type.GetProperty(iv.ManifestItemID), (iv.InjectedID.ID, iv.InjectedID.NameSpaceIndex));
+                if (iv != null)
+                {
+                    PropertyInfo? propInfo = type.GetProperty(iv.ManifestItemID);
+                    if (propInfo != null)
+                    {
+                        _inSignalsDictionary.Add(propInfo, (iv.InjectedID.ID, iv.InjectedID.NameSpaceIndex));
+                    }
+                }
             }
         }
     }
