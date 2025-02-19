@@ -121,7 +121,7 @@ public class BasicController
 
                 if (!double.IsNaN(currentValue) && !double.IsNaN(currentSetPoint) && currentValue != currentSetPoint)
                 {
-                    if (double.IsNaN(rateOfChange))
+                    if (double.IsNaN(rateOfChange) || rateOfChange == 0)
                     {
                         if (currentValue > currentSetPoint)
                         {
