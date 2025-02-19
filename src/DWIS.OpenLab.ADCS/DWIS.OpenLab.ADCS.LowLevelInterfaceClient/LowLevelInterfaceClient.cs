@@ -56,7 +56,11 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
 
         public void WriteInSignals(LowLevelInterfaceInSignals lowLevelInterfaceInSignals, DateTime souceTime)
         {
-            _dwisClient.UpdateAnyVariables(_inSignalsDictionary.Select(kvp => (kvp.Value.nsIndex, kvp.Value.id, kvp.Key.GetValue(lowLevelInterfaceInSignals), souceTime)).ToArray());
+            var res = _inSignalsDictionary.Select(kvp => (kvp.Value.nsIndex, kvp.Value.id, kvp.Key.GetValue(lowLevelInterfaceInSignals), souceTime)).ToArray();
+            if (res != null)
+            {
+                _dwisClient.UpdateAnyVariables(res);
+            } 
         }
 
         public LowLevelInterfaceOutSignals GetOutSignals()
@@ -74,9 +78,19 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
 
         private void InitOutSignals(ManifestInjectionResult outSignalsInjectionResults)
         {
+            _dwisClient.GetNameSpaceIndex("http://ddhub.no/LowLevelInterfaceOutSignals/Variables/", out ushort nsIndex);
             Type type = typeof(LowLevelInterfaceOutSignals);
-            var nodes = outSignalsInjectionResults.ProvidedVariables.Select(iv => (iv.InjectedID.NameSpaceIndex, iv.InjectedID.ID,(object) type.GetProperty(iv.ManifestItemID))).ToArray();
-            _dwisClient.Subscribe(null, SubscriptionDataChanged, nodes);        
+            foreach (var v in outSignalsInjectionResults.ProvidedVariables)
+            {
+                if (v != null)
+                {
+                    PropertyInfo? prop = type.GetProperty(v.ManifestItemID);
+                    if (prop != null)
+                    {
+                        _dwisClient.Subscribe(prop, SubscriptionDataChanged, new(ushort, string, object)[] {new (nsIndex, v.InjectedID.ID, prop) });
+                    }
+                }
+            }
         }
 
         private void SubscriptionDataChanged(object subscriptionData, UADataChange[] changes)
@@ -86,7 +100,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
                 _lock.Enter();
                 foreach (var change in changes)
                 {
-                    if (change != null && change.Value != null && change.UserData is PropertyInfo prop ) 
+                    if (change != null && change.Value != null && subscriptionData is PropertyInfo prop) 
                     {
                         prop.SetValue(_lowLevelInterfaceOutSignals, change.Value);
                     }
@@ -97,6 +111,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
 
         private void InitInSignals(ManifestInjectionResult inSignalsInjectionResults)
         {
+            _dwisClient.GetNameSpaceIndex("http://ddhub.no/LowLevelInterfaceInSignals/Variables/", out ushort nsIndex);
             Type type = typeof(LowLevelInterfaceInSignals); 
             foreach (var iv in inSignalsInjectionResults.ProvidedVariables) 
             {
@@ -105,7 +120,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
                     PropertyInfo? propInfo = type.GetProperty(iv.ManifestItemID);
                     if (propInfo != null)
                     {
-                        _inSignalsDictionary.Add(propInfo, (iv.InjectedID.ID, iv.InjectedID.NameSpaceIndex));
+                        _inSignalsDictionary.Add(propInfo, (iv.InjectedID.ID, nsIndex));
                     }
                 }
             }
