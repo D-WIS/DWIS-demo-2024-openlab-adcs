@@ -35,10 +35,10 @@
       }
     },
     {
-      "ManifestItemID": "HoistingHearbeat",
+      "ManifestItemID": "HoistingHeartBeat",
       "InjectedID": {
         "NameSpaceIndex": 8,
-        "ID": "LowLevelInterfaceInSignals.HoistingHearbeat"
+        "ID": "LowLevelInterfaceInSignals.HoistingHeartBeat"
       }
     },
     {

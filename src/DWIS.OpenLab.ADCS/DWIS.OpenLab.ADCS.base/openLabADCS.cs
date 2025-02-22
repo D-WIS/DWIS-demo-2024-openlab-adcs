@@ -58,6 +58,10 @@ public class openLabADCS : IHostedService
             {
                 manifestFile.ProvidedVariables.Add(new ProvidedVariable() { DataType = "double", VariableID = name });
             }
+            else if (prop.PropertyType == typeof(short))
+            {
+                manifestFile.ProvidedVariables.Add(new ProvidedVariable() { DataType = "short", VariableID = name });
+            }
             else if (prop.PropertyType == typeof(bool)) 
             {
                 manifestFile.ProvidedVariables.Add(new ProvidedVariable() { DataType = "bool", VariableID = name });
@@ -83,11 +87,11 @@ public class openLabADCS : IHostedService
         double taraHookload = double.NaN;
         double taraSurfaceTorque = double.NaN;
 
-        bool circulationHeartBeatLastUpdate = false;
-        bool rotationHeartBeatLastUpdate = false;
-        bool hoistingHeartBeatLastUpdate = false;
-        bool slipsHeartBeatLastUpdate = false;
-        bool messageHeartBeatLastUpdate = false;
+        short circulationHeartBeatLastUpdate = 0;
+        short rotationHeartBeatLastUpdate = 0;
+        short hoistingHeartBeatLastUpdate = 0;
+        short slipsHeartBeatLastUpdate = 0;
+        short messageHeartBeatLastUpdate = 0;
         DateTime circulationLastUpdate = DateTime.UtcNow;
         DateTime rotationLastUpdate = DateTime.UtcNow;
         DateTime hoistingLastUpdate = DateTime.UtcNow;
@@ -121,7 +125,7 @@ public class openLabADCS : IHostedService
             
             bool inComingWOBTaraCommand, inComingTOBTaraCommand;
             double hookload, sft;
-            bool circulationHeartBeat, rotationHeartBeat, hoistHeartBeat, slipsHeartBeat, messageHeartBeat;
+            short circulationHeartBeat, rotationHeartBeat, hoistHeartBeat, slipsHeartBeat, messageHeartBeat;
             lock (LowLevelInterfaceOutSignals)
             {
                 circulationHeartBeat = LowLevelInterfaceOutSignals.CirculationHeartBeat;
@@ -167,9 +171,9 @@ public class openLabADCS : IHostedService
                     rotationHeartBeatLastUpdate = LowLevelInterfaceInSignals.RotationHeartBeat;
                     rotationLastUpdate = now;
                 }
-                if (LowLevelInterfaceInSignals.HoistingHearbeat != hoistingHeartBeatLastUpdate)
+                if (LowLevelInterfaceInSignals.HoistingHeartBeat != hoistingHeartBeatLastUpdate)
                 {
-                    hoistingHeartBeatLastUpdate = LowLevelInterfaceInSignals.HoistingHearbeat;
+                    hoistingHeartBeatLastUpdate = LowLevelInterfaceInSignals.HoistingHeartBeat;
                     hoistingLastUpdate = now;
                 }
                 //if (LowLevelInterfaceInSignals.SlipsHeartBeat != slipsHeartBeatLastUpdate)
@@ -397,11 +401,11 @@ public class openLabADCS : IHostedService
 
             lock (LowLevelInterfaceOutSignals)
             {
-                LowLevelInterfaceOutSignals.CirculationHeartBeat = !circulationHeartBeat;
-                LowLevelInterfaceOutSignals.RotationHeartBeat = !rotationHeartBeat;
-                LowLevelInterfaceOutSignals.HoistingHeartBeat = !hoistHeartBeat;
-                LowLevelInterfaceOutSignals.SlipsHeartBeat = !slipsHeartBeat;
-                LowLevelInterfaceOutSignals.MessageHeartBeat = !messageHeartBeat;
+                LowLevelInterfaceOutSignals.CirculationHeartBeat = (short)((circulationHeartBeat + 1) % 255);
+                LowLevelInterfaceOutSignals.RotationHeartBeat = (short)((rotationHeartBeat + 1) % 255);
+                LowLevelInterfaceOutSignals.HoistingHeartBeat = (short)((hoistHeartBeat + 1) % 255);
+                LowLevelInterfaceOutSignals.SlipsHeartBeat = (short)((slipsHeartBeat + 1) % 255);
+                LowLevelInterfaceOutSignals.MessageHeartBeat = (short)((messageHeartBeat + 1) % 255);
             }
 
             now = DateTime.Now;

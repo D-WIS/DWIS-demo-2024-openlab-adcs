@@ -14,7 +14,7 @@ public class LowLevelInterfaceInSignals
     public double RequestedHoistingSpeed { get; set; }
     public double RequestedHoistingAccelerationLimit { get; set; }
     public bool RequestedZeroWOB { get; set; }
-    public bool HoistingHearbeat { get; set; }
+    public short HoistingHeartBeat { get; set; }
     public double MaxRefreshDelayHoistingHeartbeat { get; set; }
     public double HoistingSMMDelay { get; set; }
     public double HoistingSMMAccelerationLimit { get; set; }
@@ -27,7 +27,7 @@ public class LowLevelInterfaceInSignals
     public double RequestedRotationAccelerationLimit { get;  set; }
     public double RequestedMaxTorqueLimit { get; set; }
     public bool RequestedZeroTorque { get; set;  }
-    public bool RotationHeartBeat { get; set; }
+    public short RotationHeartBeat { get; set; }
     public double MaxRefreshDelayRotationHeartbeat { get; set; }
     public double RotationSMMDelay { get; set; }
     public double RotationSMMAccelerationLimit { get; set; }
@@ -38,7 +38,7 @@ public class LowLevelInterfaceInSignals
     public double RequestedCirculationFlowRate { get; set; }
     public double RequestedCirculationAccelerationLimit { get; set; }
     public bool RequestedOpenIBOP { get; set; }
-    public bool CirculationHeartBeat { get; set; }
+    public short CirculationHeartBeat { get; set; }
     public double MaxRefreshDelayCirculationHeartbeat { get; set; }
     public double CirculationSMMDelay { get; set; }
     public double CirculationSMMAccelerationLimit { get; set; }

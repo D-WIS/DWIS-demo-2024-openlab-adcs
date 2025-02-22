@@ -20,7 +20,7 @@ public class LowLevelInterfaceOutSignals
     public double ToolJoint1AtMaxDrillElevation { get; set; }
     public bool TooLowElevationAlarm { get; set; }
     public bool TooHighElevationAlarm { get; set; }
-    public bool HoistingHeartBeat { get; set; }
+    public short HoistingHeartBeat { get; set; }
     public double MaxHoistingRefreshDelay { get; set; }
 
     //rotation
@@ -31,7 +31,7 @@ public class LowLevelInterfaceOutSignals
     public double MeasuredRotationTorque { get; set; }
     public double ActualMaxRotationTorqueLimit { get; set; }
     public bool ZeroTorqueInProgress { get; set; }
-    public bool RotationHeartBeat { get; set; }
+    public short RotationHeartBeat { get; set; }
     public double MaxRotationRefreshDelay { get; set; }
 
     //circulation
@@ -41,13 +41,13 @@ public class LowLevelInterfaceOutSignals
     public double MeasuredStandPipePressure { get; set; }
     public bool OpeniBOPCommand { get; set; }
     public double OpeniBOPStatus { get; set; }
-    public bool CirculationHeartBeat { get; set; }
+    public short CirculationHeartBeat { get; set; }
     public double MaxCirculationRefreshDelay { get; set; }
 
     //slips
     public bool SlipsControlGranted { get; set; }
     public bool ActualSlipsState { get; set; }
-    public bool SlipsHeartBeat { get; set; }
+    public short SlipsHeartBeat { get; set; }
     public double MaxSlipsRefreshDelay { get; set; }
 
     //booster pumping
@@ -58,7 +58,7 @@ public class LowLevelInterfaceOutSignals
     public uint MaxMessageLength { get; set; }
     public bool FixedMessage { get; set; }
     public char TextFieldSeparator { get; set; }
-    public bool MessageHeartBeat { get; set; }
+    public short MessageHeartBeat { get; set; }
     public double MaxMessageRefreshDelay { get; set; }
 
 
@@ -112,14 +112,26 @@ public class LowLevelInterfaceOutSignals
     {
         if (property.PropertyType == typeof(double))
         { return "double"; }
-        if (property.PropertyType == typeof(float)) { return "float"; }
-        if (property.PropertyType == typeof(string)) { return "string"; }
-        if (property.PropertyType == typeof(bool)) { return "boolean"; }
-        if (property.PropertyType == typeof(int)) { return "int"; }
-        if (property.PropertyType == typeof(long)) { return "long"; }
-        if (property.PropertyType == typeof(uint)) { return "uint"; }
-        if (property.PropertyType == typeof(ulong)) { return "ulong"; }
-        if (property.PropertyType == typeof(char)) { return "char"; }
+        if (property.PropertyType == typeof(float))
+        { return "float"; }
+        if (property.PropertyType == typeof(string))
+        { return "string"; }
+        if (property.PropertyType == typeof(bool))
+        { return "boolean"; }
+        if (property.PropertyType == typeof(int))
+        { return "int"; }
+        if (property.PropertyType == typeof(long))
+        { return "long"; }
+        if (property.PropertyType == typeof(uint))
+        { return "uint"; }
+        if (property.PropertyType == typeof(ulong))
+        { return "ulong"; }
+        if (property.PropertyType == typeof(short))
+        { return "short"; }
+        if (property.PropertyType == typeof(ushort))
+        { return "ushort"; }
+        if (property.PropertyType == typeof(char))
+        { return "char"; }
         return string.Empty;
     }
 
