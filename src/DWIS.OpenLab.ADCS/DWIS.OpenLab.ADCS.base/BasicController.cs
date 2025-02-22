@@ -105,6 +105,7 @@ public class BasicController
                 _rateOfChangeSetPoint = System.Math.Max(_machineLimits.MachineMinimumRateOfChangeSetPoint, System.Math.Min(_machineLimits.MachineMaximumRateOfChangeSetPoint, rateOfChangeSetPoint));
             }
         }
+        else { _rateOfChangeSetPoint = double.NaN; }
         return _rateOfChangeSetPoint;
     }
 
@@ -121,7 +122,10 @@ public class BasicController
 
                 if (!double.IsNaN(currentValue) && !double.IsNaN(currentSetPoint) && currentValue != currentSetPoint)
                 {
-                    if (double.IsNaN(rateOfChange))
+                    double absoluteRateOfChange = (currentSetPoint - currentValue) / _loopSpan.TotalSeconds;
+
+
+                    if (double.IsNaN(rateOfChange) || rateOfChange == 0)
                     {
                         if (currentValue > currentSetPoint)
                         {
@@ -137,8 +141,18 @@ public class BasicController
                         rateOfChange = System.Math.Sign(currentSetPoint - currentValue) * System.Math.Abs(rateOfChange);
                     }
 
+                    if (absoluteRateOfChange < 0 && rateOfChange < absoluteRateOfChange)
+                    {
+                        rateOfChange = absoluteRateOfChange;
+                    }
+                    else if (absoluteRateOfChange > 0 && rateOfChange > absoluteRateOfChange) 
+                    {
+                        rateOfChange = absoluteRateOfChange;
+                    }
+
 
                     double command = currentValue + rateOfChange * _loopSpan.TotalSeconds;  //not sure this will provide the right acceleration...
+
 
                     SetCommand(command);
 
