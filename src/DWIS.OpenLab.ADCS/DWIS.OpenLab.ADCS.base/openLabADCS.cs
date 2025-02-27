@@ -429,7 +429,7 @@ public class openLabADCS : IHostedService
     private void Initialize()
     {
         var manifestIn = BuildManifest(typeof(LowLevelInterfaceInSignals), "LowLevelInterfaceInSignals");
-        var manifestOut = BuildManifest(typeof(LowLevelInterfaceOutSignals), "LowLevelInterfaceOutSignals");
+        var manifestOut = BuildManifest(typeof(LowLevelInterfaceOutSignals), "LowLevelInterfaceOutSignals");    
 
         var resIn = _dwisClient.Inject(manifestIn);
         var resOut = _dwisClient.Inject(manifestOut);
@@ -442,7 +442,6 @@ public class openLabADCS : IHostedService
         var subData = resIn.ProvidedVariables.Select(pv => (pv.InjectedID.NameSpaceIndex, pv.InjectedID.ID,(object) typeof(LowLevelInterfaceInSignals).GetProperty(pv.ManifestItemID)!)).ToArray();
 
         _dwisClient.Subscribe(null, SubscriptionDataChanged, subData);
-
     }
 
     private void SubscriptionDataChanged(object subscriptionData, UADataChange[] changes)
