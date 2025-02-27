@@ -30,7 +30,7 @@ public class openLabADCS : IHostedService
 
         MachineLimits hoistingLimits = new MachineLimits() { MachineMaximumSetPoint = 5, MachineMinimumSetPoint = -5, MachineMaximumRateOfChangeSetPoint = .05, MachineMinimumRateOfChangeSetPoint = -0.5 };
         MachineLimits rotationLimits = new MachineLimits() {MachineMaximumSetPoint = 5, MachineMinimumSetPoint = -1, MachineMaximumRateOfChangeSetPoint = .5, MachineMinimumRateOfChangeSetPoint = -1 };
-        MachineLimits circulationLimits = new MachineLimits() { MachineMaximumSetPoint = 5000.0 / 60000.0, MachineMinimumSetPoint = -0.0001, MachineMaximumRateOfChangeSetPoint = 50.0 / 60000.0, MachineMinimumRateOfChangeSetPoint = -50.0 / 60000.0 };
+        MachineLimits circulationLimits = new MachineLimits() { MachineMaximumSetPoint = 5000.0 / 60000.0, MachineMinimumSetPoint = -0.0001, MachineMaximumRateOfChangeSetPoint = 500.0 / 60000.0, MachineMinimumRateOfChangeSetPoint = -500.0 / 60000.0 };
         //DrillingControlSystem = new DCS(dwisClient, new RigMachineLimits(), )
         RigMachineLimits limits = new RigMachineLimits(hoistingLimits, rotationLimits, circulationLimits);
 

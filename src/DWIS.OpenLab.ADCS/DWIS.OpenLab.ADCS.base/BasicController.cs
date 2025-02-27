@@ -94,11 +94,11 @@ public class BasicController
         {
             if (!double.IsNaN(MinimumSetPoint))
             {
-                rateOfChangeSetPoint = System.Math.Max(MinimumSetPoint, rateOfChangeSetPoint);
+                rateOfChangeSetPoint = System.Math.Max(MinimumRateOfChangeSetPoint, rateOfChangeSetPoint);
             }
             if (!double.IsNaN(MaximumSetPoint))
             {
-                rateOfChangeSetPoint = System.Math.Min(MaximumSetPoint, rateOfChangeSetPoint);
+                rateOfChangeSetPoint = System.Math.Min(MaximumRateOfChangeSetPoint, rateOfChangeSetPoint);
             }
             lock (_lock)
             {
