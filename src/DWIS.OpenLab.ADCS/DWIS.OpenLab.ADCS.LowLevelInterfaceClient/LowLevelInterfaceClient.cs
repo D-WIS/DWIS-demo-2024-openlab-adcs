@@ -76,7 +76,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             return res;
         }
 
-        private void InitOutSignals(ManifestInjectionResult outSignalsInjectionResults, bool useFileNamespaceIndex = false)
+        private void InitOutSignals(ManifestInjectionResult outSignalsInjectionResults, bool useFileNamespaceIndex = true)
         {
             ushort nsIndex = 0;
             if (!useFileNamespaceIndex)
@@ -120,7 +120,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             }
         }
 
-        private void InitInSignals(ManifestInjectionResult inSignalsInjectionResults, bool useFileNamespaceIndex = false)
+        private void InitInSignals(ManifestInjectionResult inSignalsInjectionResults, bool useFileNamespaceIndex = true)
         {
             ushort nsIndex = 0;
             if (!useFileNamespaceIndex)
