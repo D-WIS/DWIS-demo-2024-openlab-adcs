@@ -8,10 +8,17 @@ using System.CommandLine;
 using Opc.Ua;
 
 string url = string.Empty;
-
+string inSignalsNamespace = string.Empty;
+string outSignalsNamespace = string.Empty;
 if (args != null && args.Any())
-{ 
+{
     url = args[0];
+
+    if (args.Length >= 3)
+    {
+        inSignalsNamespace = args[1];
+        outSignalsNamespace = args[2];
+    }
 }
 var hostBuilder = Host.CreateDefaultBuilder();
 hostBuilder.ConfigureServices(services =>
@@ -40,7 +47,10 @@ else
 }
 
 DWISClientOPCF dwisClient = new DWISClientOPCF(conf, loggerFactory.CreateLogger<DWISClientOPCF>());
-LowLevelInterfaceClient lowLevelInterfaceClient = new LowLevelInterfaceClient(dwisClient, logger: loggerFactory.CreateLogger<LowLevelInterfaceClient>());
+
+bool useFileNamespaceIndexes = string.IsNullOrEmpty(inSignalsNamespace) || string.IsNullOrEmpty(outSignalsNamespace);
+
+LowLevelInterfaceClient lowLevelInterfaceClient = new LowLevelInterfaceClient(dwisClient, logger: loggerFactory.CreateLogger<LowLevelInterfaceClient>(), useFileNamespaceIndex:useFileNamespaceIndexes, inSignalsNamespace: inSignalsNamespace, outSignalsNamespace:outSignalsNamespace);
 
 var props = typeof(LowLevelInterfaceInSignals).GetProperties();
 

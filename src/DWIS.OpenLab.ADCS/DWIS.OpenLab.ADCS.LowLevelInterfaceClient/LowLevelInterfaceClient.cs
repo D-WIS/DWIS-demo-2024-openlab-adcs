@@ -19,7 +19,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
 
         private Dictionary<PropertyInfo, (string id, ushort nsIndex)> _inSignalsDictionary = new Dictionary<PropertyInfo, (string id, ushort nsIndex)>();        
 
-        public LowLevelInterfaceClient(IOPCUADWISClient dwisClient, ManifestInjectionResult? outSignalsInjectionResults = null, ManifestInjectionResult? inSignalsInjectionResults = null, ILogger<LowLevelInterfaceClient>? logger = null, bool useFileNamespaceIndex = false)
+        public LowLevelInterfaceClient(IOPCUADWISClient dwisClient, ManifestInjectionResult? outSignalsInjectionResults = null, ManifestInjectionResult? inSignalsInjectionResults = null, ILogger<LowLevelInterfaceClient>? logger = null, bool useFileNamespaceIndex = true, string inSignalsNamespace = "", string outSignalsNamespace = "")
         {
             _dwisClient = dwisClient;
             _logger = logger;
@@ -31,7 +31,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             }
             if (outSignalsInjectionResults != null)
             {
-                InitOutSignals(outSignalsInjectionResults, useFileNamespaceIndex);
+                InitOutSignals(outSignalsInjectionResults, useFileNamespaceIndex, outSignalsNamespace);
             }
             else 
             {
@@ -45,7 +45,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             }
             if (inSignalsInjectionResults != null)
             {
-                InitInSignals(inSignalsInjectionResults, useFileNamespaceIndex);
+                InitInSignals(inSignalsInjectionResults, useFileNamespaceIndex, inSignalsNamespace);
             }
             else
             {
@@ -76,12 +76,12 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             return res;
         }
 
-        private void InitOutSignals(ManifestInjectionResult outSignalsInjectionResults, bool useFileNamespaceIndex = true)
+        private void InitOutSignals(ManifestInjectionResult outSignalsInjectionResults, bool useFileNamespaceIndex = true, string outSignalsNamespace = "http://ddhub.no/LowLevelInterfaceOutSignals/Variables/")
         {
             ushort nsIndex = 0;
             if (!useFileNamespaceIndex)
             {
-                _dwisClient.GetNameSpaceIndex("http://ddhub.no/LowLevelInterfaceInSignals/Variables/", out nsIndex);
+                _dwisClient.GetNameSpaceIndex(outSignalsNamespace, out nsIndex);
             }
             Type type = typeof(LowLevelInterfaceOutSignals);
             foreach (var v in outSignalsInjectionResults.ProvidedVariables)
@@ -120,12 +120,12 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             }
         }
 
-        private void InitInSignals(ManifestInjectionResult inSignalsInjectionResults, bool useFileNamespaceIndex = true)
+        private void InitInSignals(ManifestInjectionResult inSignalsInjectionResults, bool useFileNamespaceIndex = true, string inSignalsNamespace = "http://ddhub.no/LowLevelInterfaceInSignals/Variables/")
         {
             ushort nsIndex = 0;
             if (!useFileNamespaceIndex)
             {
-                _dwisClient.GetNameSpaceIndex("http://ddhub.no/LowLevelInterfaceInSignals/Variables/", out nsIndex);
+                _dwisClient.GetNameSpaceIndex(inSignalsNamespace, out nsIndex);
             }
             Type type = typeof(LowLevelInterfaceInSignals); 
             foreach (var iv in inSignalsInjectionResults.ProvidedVariables) 
