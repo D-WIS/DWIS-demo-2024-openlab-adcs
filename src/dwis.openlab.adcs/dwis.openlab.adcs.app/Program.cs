@@ -7,7 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 using System.CommandLine;
 using Opc.Ua;
 
+string url = string.Empty;
 
+if (args != null && args.Any())
+{ 
+    url = args[0];
+}
 var hostBuilder = Host.CreateDefaultBuilder();
 hostBuilder.ConfigureServices(services =>
 services.AddLogging(loggingBuilder => loggingBuilder
@@ -23,7 +28,18 @@ var loggerFactory = host.Services.GetRequiredService<ILoggerFactory>();
 var logger = loggerFactory.CreateLogger<Program>();
 
 LowLevelInterfaceInSignals lowLevelInterfaceInSignals = new LowLevelInterfaceInSignals();
-DWISClientOPCF dwisClient = new DWISClientOPCF(new DWIS.Client.ReferenceImplementation.DefaultDWISClientConfiguration(), loggerFactory.CreateLogger<DWISClientOPCF>());
+
+var conf = new DWIS.Client.ReferenceImplementation.DefaultDWISClientConfiguration();
+if (!string.IsNullOrEmpty(url))
+{
+    conf.ServerAddress = url;
+}
+else
+{
+    conf.ServerAddress = "opc.tcp://10.120.34.103:4840";
+}
+
+DWISClientOPCF dwisClient = new DWISClientOPCF(conf, loggerFactory.CreateLogger<DWISClientOPCF>());
 LowLevelInterfaceClient lowLevelInterfaceClient = new LowLevelInterfaceClient(dwisClient, logger: loggerFactory.CreateLogger<LowLevelInterfaceClient>());
 
 var props = typeof(LowLevelInterfaceInSignals).GetProperties();
