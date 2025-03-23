@@ -87,14 +87,14 @@ public class LowLevelInterfaceOutSignals
             manifest.AddReference(manifest.InjectionInformation.InjectedNodesNamespaceAlias, property.Name,"http://ddhub.no/"+ Verbs.HasDynamicValue, manifest.InjectionInformation.ProvidedVariablesNamespaceAlias, property.Name);           
         }
 
-        AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.ActualHoistingSpeedSetPoint), Nouns.HookVelocity, Nouns.SetPoint);
+        AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.ActualHoistingSpeedSetPoint), Nouns.HookVelocity, Nouns.Command);
         AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.ActualHoistingSpeedMeasured), Nouns.HookVelocity, Nouns.Measurement);
         AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.MeasuredHookload), Nouns.HookLoad, Nouns.Measurement);
         AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.MeasuredSWOB), Nouns.WOB, Nouns.Measurement);
-        AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.ActualRotationSpeedSetPoint), Nouns.SurfaceRPM, Nouns.SetPoint);
+        AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.ActualRotationSpeedSetPoint), Nouns.SurfaceRPM, Nouns.Command);
         AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.ActualRotationSpeedMeasured), Nouns.SurfaceRPM, Nouns.Measurement);
         AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.MeasuredRotationTorque), Nouns.SurfaceTorque, Nouns.Measurement);
-        AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedSetPoint), Nouns.FlowRateIn, Nouns.SetPoint);
+        AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedSetPoint), Nouns.FlowRateIn, Nouns.Command);
         AddClasses(manifest, nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured), Nouns.FlowRateIn, Nouns.Measurement);
         return manifest;
     }
