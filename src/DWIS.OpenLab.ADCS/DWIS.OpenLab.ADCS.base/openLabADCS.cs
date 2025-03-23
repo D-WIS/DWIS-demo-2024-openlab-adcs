@@ -97,13 +97,12 @@ public class openLabADCS : IHostedService
         DateTime hoistingLastUpdate = DateTime.UtcNow;
         DateTime slipsLastUpdate = DateTime.UtcNow;
         DateTime messageLastUpdate = DateTime.UtcNow;
-        TimeSpan circulationMaxRefreshInterval = TimeSpan.FromSeconds(5);
-        TimeSpan rotationMaxRefreshInterval = TimeSpan.FromSeconds(5);
-        TimeSpan hoistingMaxRefreshInterval = TimeSpan.FromSeconds(5);
-        TimeSpan slipsMaxRefreshInterval = TimeSpan.FromSeconds(5);
-        TimeSpan messageMaxRefreshInterval = TimeSpan.FromSeconds(5);
-
-        TimeSpan lostCommunicationMessageMaxRefreshInterval = TimeSpan.FromSeconds(5);
+        TimeSpan circulationMaxRefreshInterval = TimeSpan.FromSeconds(500);
+        TimeSpan rotationMaxRefreshInterval = TimeSpan.FromSeconds(500);
+        TimeSpan hoistingMaxRefreshInterval = TimeSpan.FromSeconds(500);
+        TimeSpan slipsMaxRefreshInterval = TimeSpan.FromSeconds(500);
+        TimeSpan messageMaxRefreshInterval = TimeSpan.FromSeconds(500);
+        TimeSpan lostCommunicationMessageMaxRefreshInterval = TimeSpan.FromSeconds(500);
         DateTime circulationLostCommunicationLastUpdate = DateTime.MinValue;
         DateTime rotationLostCommunicationLastUpdate = DateTime.MinValue;
         DateTime hoistingLostCommunicationLastUpdate = DateTime.MinValue;
@@ -113,9 +112,9 @@ public class openLabADCS : IHostedService
         while (await timer.WaitForNextTickAsync())
         {
             DateTime now = DateTime.UtcNow;
-            bool hoistingRequested, circulationRequested, rotationRequested;
+            bool? hoistingRequested, circulationRequested, rotationRequested;
 
-            double requestedHoistingSpeed,requestedRotationSpeed, requestedCirculationSpeed,  requestedHoistingAccelerationLimit, requestedRotationAccelerationLimit, requestedCirculationAccelerationLimit;
+            double? requestedHoistingSpeed,requestedRotationSpeed, requestedCirculationSpeed,  requestedHoistingAccelerationLimit, requestedRotationAccelerationLimit, requestedCirculationAccelerationLimit;
 
             double drillerHoistingSpeed, drillerRotationSpeed, drillerCirculationSpeed;
             drillerHoistingSpeed = drillerCirculationSpeed = drillerRotationSpeed = 0;
@@ -123,7 +122,7 @@ public class openLabADCS : IHostedService
             double actualHoistingSpeed, actualRotationSpeed, actualCirculationSpeed;
             double tj1;
             
-            bool inComingWOBTaraCommand, inComingTOBTaraCommand;
+            bool? inComingWOBTaraCommand, inComingTOBTaraCommand;
             double hookload, sft;
             short circulationHeartBeat, rotationHeartBeat, hoistHeartBeat, slipsHeartBeat, messageHeartBeat;
             lock (LowLevelInterfaceOutSignals)
@@ -160,20 +159,20 @@ public class openLabADCS : IHostedService
             bool messageLostCommunication = false;
             lock (LowLevelInterfaceInSignals)
             {
-                if (LowLevelInterfaceInSignals.CirculationHeartBeat != circulationHeartBeatLastUpdate)
+                if (LowLevelInterfaceInSignals.CirculationHeartBeat != null && LowLevelInterfaceInSignals.CirculationHeartBeat != circulationHeartBeatLastUpdate)
                 {
-                    circulationHeartBeatLastUpdate = LowLevelInterfaceInSignals.CirculationHeartBeat;
+                    circulationHeartBeatLastUpdate = LowLevelInterfaceInSignals.CirculationHeartBeat.Value;
                     circulationLastUpdate = now;
                 }
 
-                if (LowLevelInterfaceInSignals.RotationHeartBeat != rotationHeartBeatLastUpdate)
+                if (LowLevelInterfaceInSignals.RotationHeartBeat != null && LowLevelInterfaceInSignals.RotationHeartBeat != rotationHeartBeatLastUpdate)
                 {
-                    rotationHeartBeatLastUpdate = LowLevelInterfaceInSignals.RotationHeartBeat;
+                    rotationHeartBeatLastUpdate = LowLevelInterfaceInSignals.RotationHeartBeat.Value;
                     rotationLastUpdate = now;
                 }
-                if (LowLevelInterfaceInSignals.HoistingHeartBeat != hoistingHeartBeatLastUpdate)
+                if (LowLevelInterfaceInSignals.HoistingHeartBeat != null && LowLevelInterfaceInSignals.HoistingHeartBeat != hoistingHeartBeatLastUpdate)
                 {
-                    hoistingHeartBeatLastUpdate = LowLevelInterfaceInSignals.HoistingHeartBeat;
+                    hoistingHeartBeatLastUpdate = LowLevelInterfaceInSignals.HoistingHeartBeat.Value;
                     hoistingLastUpdate = now;
                 }
                 //if (LowLevelInterfaceInSignals.SlipsHeartBeat != slipsHeartBeatLastUpdate)
@@ -295,17 +294,23 @@ public class openLabADCS : IHostedService
                 tj1 = LowLevelInterfaceOutSignals.ToolJoint1Elevation;
             }
 
-            if (inComingWOBTaraCommand && !wobTaraCommand)
+            if (inComingWOBTaraCommand != null && inComingWOBTaraCommand.Value && !wobTaraCommand)
             {
                 taraHookload = hookload;
             }
-            if (inComingTOBTaraCommand && !tobTaraCommand) 
+            if (inComingTOBTaraCommand != null && inComingTOBTaraCommand.Value && !tobTaraCommand) 
             {
                 taraSurfaceTorque = sft;
             }
 
-            wobTaraCommand = inComingTOBTaraCommand;
-            tobTaraCommand = inComingTOBTaraCommand;
+            if (inComingTOBTaraCommand != null)
+            {
+                wobTaraCommand = inComingTOBTaraCommand.Value;
+            }
+            if (inComingTOBTaraCommand != null)
+            {
+                tobTaraCommand = inComingTOBTaraCommand.Value;
+            }
 
             LowLevelInterfaceOutSignals.MeasuredSWOB = taraHookload - hookload;
 
@@ -313,34 +318,34 @@ public class openLabADCS : IHostedService
             DrillingControlSystem.TopdriveController.SetActualValue(actualRotationSpeed);
             DrillingControlSystem.MudpumpsController.SetActualValue(actualCirculationSpeed);
 
-            LowLevelInterfaceOutSignals.HoistingControlGranted = hoistingRequested && !hoistingLostCommunication;//make more advanced, with validation.
-            LowLevelInterfaceOutSignals.RotationControlGranted = rotationRequested && !rotationLostCommunication;
-            LowLevelInterfaceOutSignals.CirculationControlGranted = circulationRequested && !circulationLostCommunication;
+            LowLevelInterfaceOutSignals.HoistingControlGranted = hoistingRequested != null &&  hoistingRequested.Value && !hoistingLostCommunication;//make more advanced, with validation.
+            LowLevelInterfaceOutSignals.RotationControlGranted = rotationRequested != null && rotationRequested.Value && !rotationLostCommunication;
+            LowLevelInterfaceOutSignals.CirculationControlGranted = circulationRequested != null && circulationRequested.Value && !circulationLostCommunication;
 
 
-            if (_acquiredDrillerSignals[_drillerTOSVelocitySPTag].Any())
+            if (_acquiredDrillerSignals != null && _acquiredDrillerSignals[_drillerTOSVelocitySPTag].Any())
             {
                 drillerHoistingSpeed = _acquiredDrillerSignals[_drillerTOSVelocitySPTag][0].GetValue<double>();
             }
-            if (_acquiredDrillerSignals[_drillerRotationSPTag].Any())
+            if (_acquiredDrillerSignals != null && _acquiredDrillerSignals[_drillerRotationSPTag].Any())
             {
                 drillerRotationSpeed = _acquiredDrillerSignals[_drillerRotationSPTag][0].GetValue<double>();
             }
-            if (_acquiredDrillerSignals[_drillerCirculationSPTag].Any())
+            if (_acquiredDrillerSignals != null && _acquiredDrillerSignals[_drillerCirculationSPTag].Any())
             {
                 drillerCirculationSpeed = _acquiredDrillerSignals[_drillerCirculationSPTag][0].GetValue<double>();
             }
             //hoisting
-            if (LowLevelInterfaceOutSignals.HoistingControlGranted)
+            if (LowLevelInterfaceOutSignals.HoistingControlGranted && requestedHoistingSpeed != null && requestedHoistingAccelerationLimit != null)
             {
-                DrillingControlSystem.DrawworkController.SetSetPoint(requestedHoistingSpeed);
+                DrillingControlSystem.DrawworkController.SetSetPoint(requestedHoistingSpeed.Value);
                 if (actualHoistingSpeed > requestedHoistingSpeed)
                 {
-                    DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint(-requestedHoistingAccelerationLimit);
+                    DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint(-requestedHoistingAccelerationLimit.Value);
                 }
                 else
                 { 
-                    DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint( requestedHoistingAccelerationLimit);
+                    DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint( requestedHoistingAccelerationLimit.Value);
                 }
             }
             else
@@ -349,16 +354,16 @@ public class openLabADCS : IHostedService
                 DrillingControlSystem.DrawworkController.SetRateOfChangeSetPoint(double.NaN);
             }
             //rotation
-            if (LowLevelInterfaceOutSignals.RotationControlGranted)
+            if (LowLevelInterfaceOutSignals.RotationControlGranted && requestedRotationSpeed != null && requestedRotationAccelerationLimit != null)
             {
-                DrillingControlSystem.TopdriveController.SetSetPoint(requestedRotationSpeed);
+                DrillingControlSystem.TopdriveController.SetSetPoint(requestedRotationSpeed.Value);
                 if (actualRotationSpeed > requestedRotationSpeed)
                 {
-                    DrillingControlSystem.TopdriveController.SetRateOfChangeSetPoint(-requestedRotationAccelerationLimit);
+                    DrillingControlSystem.TopdriveController.SetRateOfChangeSetPoint(-requestedRotationAccelerationLimit.Value);
                 }
                 else
                 {
-                    DrillingControlSystem.TopdriveController.SetRateOfChangeSetPoint(requestedRotationAccelerationLimit);
+                    DrillingControlSystem.TopdriveController.SetRateOfChangeSetPoint(requestedRotationAccelerationLimit.Value);
                 }
             }
             else
@@ -368,16 +373,16 @@ public class openLabADCS : IHostedService
             }
 
             //circulation
-            if (LowLevelInterfaceOutSignals.CirculationControlGranted)
+            if (LowLevelInterfaceOutSignals.CirculationControlGranted && requestedCirculationSpeed != null && requestedCirculationAccelerationLimit != null)
             {
-                DrillingControlSystem.MudpumpsController.SetSetPoint(requestedCirculationSpeed);
+                DrillingControlSystem.MudpumpsController.SetSetPoint(requestedCirculationSpeed.Value);
                 if (actualCirculationSpeed > requestedCirculationSpeed)
                 {
-                    DrillingControlSystem.MudpumpsController.SetRateOfChangeSetPoint(-requestedCirculationAccelerationLimit);
+                    DrillingControlSystem.MudpumpsController.SetRateOfChangeSetPoint(-requestedCirculationAccelerationLimit.Value);
                 }
                 else
                 {
-                    DrillingControlSystem.MudpumpsController.SetRateOfChangeSetPoint(requestedCirculationAccelerationLimit);
+                    DrillingControlSystem.MudpumpsController.SetRateOfChangeSetPoint(requestedCirculationAccelerationLimit.Value);
                 }
             }
             else
