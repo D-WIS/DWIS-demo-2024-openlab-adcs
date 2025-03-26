@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DWIS.OpenLab.ADCS.LowLevelSignalsReplication": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
