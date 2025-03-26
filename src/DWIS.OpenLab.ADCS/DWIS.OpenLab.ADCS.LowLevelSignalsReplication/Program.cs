@@ -13,58 +13,67 @@ LowLevelInterfaceClient lowLevelInterfaceClient = new LowLevelInterfaceClient(dw
 TimeSpan replicationSpan = TimeSpan.FromMilliseconds(500);
 (string manifestItem, string propertyName)[] baseMapping =
     {
-("FlowRateInSetPoint", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedSetPoint)),
-("TopOfStringVelocitySetPoint", nameof(LowLevelInterfaceOutSignals.ActualHoistingSpeedSetPoint)),
-("SurfaceRPMSetPoint", nameof(LowLevelInterfaceOutSignals.ActualRotationSpeedSetPoint)),
-("HookLoad", nameof(LowLevelInterfaceOutSignals.MeasuredHookload)),
-("SPP", nameof(LowLevelInterfaceOutSignals.MeasuredStandPipePressure)),
-("SurfaceTorque", nameof(LowLevelInterfaceOutSignals.MeasuredRotationTorque)),
-("FlowRateIn", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
-//("ActivePitVolume", nameof(LowLevelInterfaceOutSignals.ta)),
-//("BitDepth", nameof(LowLevelInterfaceOutSignals.dep)),
-//("DownholeECD", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
-//("DownholePressure", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
-//("FlowRateOut", nameof(LowLevelInterfaceOutSignals.meas)),
-("SurfaceRPM", nameof(LowLevelInterfaceOutSignals.ActualRotationSpeedMeasured)),
-//("TD", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
-("WOB", nameof(LowLevelInterfaceOutSignals.MeasuredSWOB)),
-//("InstantaneousROP", nameof(LowLevelInterfaceOutSignals.rop)),
-//("HookPosition", nameof(LowLevelInterfaceOutSignals.po)),
-("HookVelocity", nameof(LowLevelInterfaceOutSignals.ActualHoistingSpeedMeasured)),
-//("", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
+        ("FlowRateInSetPoint", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedSetPoint)),
+        ("TopOfStringVelocitySetPoint", nameof(LowLevelInterfaceOutSignals.ActualHoistingSpeedSetPoint)),
+        ("SurfaceRPMSetPoint", nameof(LowLevelInterfaceOutSignals.ActualRotationSpeedSetPoint)),
+        ("HookLoad", nameof(LowLevelInterfaceOutSignals.MeasuredHookload)),
+        ("SPP", nameof(LowLevelInterfaceOutSignals.MeasuredStandPipePressure)),
+        ("SurfaceTorque", nameof(LowLevelInterfaceOutSignals.MeasuredRotationTorque)),
+        ("FlowRateIn", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
+        //("ActivePitVolume", nameof(LowLevelInterfaceOutSignals.ta)),
+        //("BitDepth", nameof(LowLevelInterfaceOutSignals.dep)),
+        //("DownholeECD", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
+        //("DownholePressure", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
+        //("FlowRateOut", nameof(LowLevelInterfaceOutSignals.meas)),
+        ("SurfaceRPM", nameof(LowLevelInterfaceOutSignals.ActualRotationSpeedMeasured)),
+        //("TD", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
+        ("WOB", nameof(LowLevelInterfaceOutSignals.MeasuredSWOB)),
+        //("InstantaneousROP", nameof(LowLevelInterfaceOutSignals.spee)),
+        //("HookPosition", nameof(LowLevelInterfaceOutSignals.po)),
+        ("HookVelocity", nameof(LowLevelInterfaceOutSignals.ActualHoistingSpeedMeasured)),
+        //("", nameof(LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured)),
 };
 
 
 
 
 if (File.Exists(openLabManifestPath))
-{ 
+{
     var json = File.ReadAllText(openLabManifestPath);
     if (!string.IsNullOrEmpty(json))
     {
         ManifestFile openLabManifestFile = ManifestFile.FromJsonString(json);
 
         var injectionResults = dwisClient.Inject(openLabManifestFile);
-        List<(InjectionMapping injectionMapping, PropertyInfo llOutProperty)> mapping =BuildMapping(injectionResults);
+        List<(InjectionMapping injectionMapping, PropertyInfo llOutProperty)> mapping = BuildMapping(injectionResults);
 
-        PeriodicTimer timer = new PeriodicTimer(replicationSpan);
-
-        while (await timer.WaitForNextTickAsync())
+        if (mapping != null 
+            && mapping.Any() 
+            && mapping.First().injectionMapping != null
+            && mapping.All(m =>(m.injectionMapping!= null 
+                                    && m.injectionMapping.InjectedID.NameSpaceIndex == mapping.First().injectionMapping.InjectedID.NameSpaceIndex)) 
+            && dwisClient.GetNameSpace(mapping.First().injectionMapping.InjectedID.NameSpaceIndex, out string ns) 
+            && dwisClient.GetNameSpaceIndex(ns, out ushort nsIdx))
         {
-            var llSignalsOut = lowLevelInterfaceClient.GetOutSignals();
-            if (llSignalsOut != null) 
+
+            PeriodicTimer timer = new PeriodicTimer(replicationSpan);
+
+            while (await timer.WaitForNextTickAsync())
             {
-                DateTime now = DateTime.Now;
-                var toWrite = mapping.Select(m => (m.injectionMapping.InjectedID.NameSpaceIndex, m.injectionMapping.InjectedID.ID, m.llOutProperty.GetValue(llSignalsOut)!, now)).ToArray();
-                if (toWrite != null && toWrite.Any())
+                var llSignalsOut = lowLevelInterfaceClient.GetOutSignals();
+                if (llSignalsOut != null)
                 {
-                    dwisClient.UpdateAnyVariables(toWrite);
+                    DateTime now = DateTime.Now;
+                    var toWrite = mapping.Select(m => (nsIdx, m.injectionMapping.InjectedID.ID, m.llOutProperty.GetValue(llSignalsOut)!, now)).ToArray();
+                    if (toWrite != null && toWrite.Any())
+                    {
+                        dwisClient.UpdateAnyVariables(toWrite);
+                    }
                 }
-            }               
+            }
         }
     }
 }
-
 
 Console.ReadLine();
 
