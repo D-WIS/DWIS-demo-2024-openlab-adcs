@@ -1,0 +1,26 @@
+{
+  "LoopDuration": "00:00:00.1000000",
+  "Blackboard": "opc.tcp://localhost:48030",
+  "DDHub": "opc.tcp://localhost:48030",
+  "MappingIn": [
+    {
+      "nsDDHub": "http://ddhub.no/LowLevelInterfaceOutSignals/Variables/",
+      "idDDHub": "LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured",
+      "nsBlackboard": "http://ddhub.no/openLAB/Variables/",
+      "idBlackboard": "openLAB.FlowRateIn",
+      "SparQL": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX ddhub: <http://ddhub.no/>\r\nSELECT ?signal \r\nWHERE {\r\n\t\t\t?dataPoint ddhub:HasDynamicValue ?signal .\r\n\t\t\t?dataPoint rdf:type ddhub:FlowRateIn .\r\n}\r\n",
+      "Display": true
+    }
+  ],
+  "MappingOut": [
+    {
+      "nsDDHub": "http://ddhub.no/LowLevelInterfaceInSignals/Variables/",
+      "idDDHub": "LowLevelInterfaceInSignals.RequestedCirculationFlowRate",
+      "nsBlackboard": "http://ddhub.no/LowLevelInterfaceInSignals/Variables/",
+      "idBlackboard": "LowLevelInterfaceInSignals.RequestedCirculationFlowRate",
+      "SparQL": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX ddhub: <http://ddhub.no/>\r\nSELECT ?signal \r\nWHERE {\r\n\t\t\t?dataPoint ddhub:HasDynamicValue ?signal .\r\n\t\t\t?dataPoint rdf:type ddhub:FlowRateIn .\r\n}\r\n",
+      "Display": true
+    }
+  ],
+  "Browse": false
+}
