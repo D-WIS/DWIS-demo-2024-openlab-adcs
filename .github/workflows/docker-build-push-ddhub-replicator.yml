@@ -16,7 +16,8 @@ jobs:
       uses: actions/checkout@v2
       
     - name: Build Service Docker image
-      run: docker build --file "${{ github.workspace }}/src/DWIS.OpenLab.ADCS/DWIS.OpenLab.DDHubReplicator/Dockerfile" --tag digiwells/dwisopenlabddhubreplicator:stable .
+      run: docker build --file "DWIS.OpenLab.DDHubReplicator/Dockerfile" --tag digiwells/dwisopenlabddhubreplicator:stable .
+      working-directory: ${{github.workspace}}/src/DWIS.OpenLab.ADCS
 
     - name: Login to DockerHub
       run: docker login -u="${{ secrets.DOCKERHUB_USERNAME }}" -p="${{ secrets.DOCKERHUB_PASSWORD }}"
