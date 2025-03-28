@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DWIS.OpenLab.DDHubReplicato
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4976CB30-D28E-4765-B89E-BE285DE01BB1}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\docker-build-push-ddhub-replicator.yml = .github\workflows\docker-build-push-ddhub-replicator.yml
+		..\..\.github\workflows\docker-build-push-ddhub-replicator.yml = ..\..\.github\workflows\docker-build-push-ddhub-replicator.yml
 	EndProjectSection
 EndProject
 Global
