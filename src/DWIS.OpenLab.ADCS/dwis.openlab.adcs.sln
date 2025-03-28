@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35514.174
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DWIS.OpenLab.ADCS.App", "dwis.openlab.adcs.app\DWIS.OpenLab.ADCS.App.csproj", "{9D7B60BD-88A0-400D-B5A2-9BD11819101C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DWIS.OpenLab.ADCS.Base", "dwis.openlab.adcs.base\DWIS.OpenLab.ADCS.Base.csproj", "{63372C6D-2574-4B8E-9107-121BC31BC0F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DWIS.OpenLab.ADCS.LowLevelInterfaceClient", "DWIS.OpenLab.ADCS.LowLevelInterfaceClient\DWIS.OpenLab.ADCS.LowLevelInterfaceClient.csproj", "{2BE8DF3F-1251-4350-9639-EEE5A257D023}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DWIS.OpenLab.ADCS.LowLevelSignalsReplication", "DWIS.OpenLab.ADCS.LowLevelSignalsReplication\DWIS.OpenLab.ADCS.LowLevelSignalsReplication.csproj", "{E96E571D-B903-4136-9FB1-C271417D6E1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DWIS.OpenLab.DDHubReplicator", "DWIS.OpenLab.DDHubReplicator\DWIS.OpenLab.DDHubReplicator.csproj", "{E9BBC132-C8FF-4848-8C6A-B01013F1763F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4976CB30-D28E-4765-B89E-BE285DE01BB1}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\.github\workflows\docker-build-push-ddhub-replicator.yml = ..\..\.github\workflows\docker-build-push-ddhub-replicator.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9D7B60BD-88A0-400D-B5A2-9BD11819101C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D7B60BD-88A0-400D-B5A2-9BD11819101C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D7B60BD-88A0-400D-B5A2-9BD11819101C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D7B60BD-88A0-400D-B5A2-9BD11819101C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63372C6D-2574-4B8E-9107-121BC31BC0F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63372C6D-2574-4B8E-9107-121BC31BC0F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63372C6D-2574-4B8E-9107-121BC31BC0F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63372C6D-2574-4B8E-9107-121BC31BC0F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BE8DF3F-1251-4350-9639-EEE5A257D023}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BE8DF3F-1251-4350-9639-EEE5A257D023}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BE8DF3F-1251-4350-9639-EEE5A257D023}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BE8DF3F-1251-4350-9639-EEE5A257D023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E96E571D-B903-4136-9FB1-C271417D6E1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E96E571D-B903-4136-9FB1-C271417D6E1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E96E571D-B903-4136-9FB1-C271417D6E1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E96E571D-B903-4136-9FB1-C271417D6E1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9BBC132-C8FF-4848-8C6A-B01013F1763F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9BBC132-C8FF-4848-8C6A-B01013F1763F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9BBC132-C8FF-4848-8C6A-B01013F1763F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9BBC132-C8FF-4848-8C6A-B01013F1763F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
