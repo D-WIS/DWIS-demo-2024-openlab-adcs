@@ -27,6 +27,10 @@ On linux
 ```bash
 docker run -d --name ddhubreplicator -v /home/Volumes/DWISOpenLabDDHubReplicator:/home --network dwisnetwork -d digiwells/dwisopenlabddhubreplicator:stable
 ```
+ and at AkerBP:
+ ```bash
+docker run -d --name ddhubreplicator -v /home/Volumes/DWISOpenLabDDHubReplicator:/home --network dwisnetwork -d digiwells/dwisopenlabddhubreplicator:stable
+```
 
 
 ## Configuration

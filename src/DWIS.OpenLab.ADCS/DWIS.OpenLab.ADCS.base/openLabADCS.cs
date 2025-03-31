@@ -86,6 +86,7 @@ public class openLabADCS : IHostedService
         bool tobTaraCommand = false;
         double taraHookload = double.NaN;
         double taraSurfaceTorque = double.NaN;
+        double iBOPOpeningSpeed = 0.1;
 
         short circulationHeartBeatLastUpdate = 0;
         short rotationHeartBeatLastUpdate = 0;
@@ -97,6 +98,7 @@ public class openLabADCS : IHostedService
         DateTime hoistingLastUpdate = DateTime.UtcNow;
         DateTime slipsLastUpdate = DateTime.UtcNow;
         DateTime messageLastUpdate = DateTime.UtcNow;
+        DateTime lastTimeStamp = DateTime.UtcNow;
         TimeSpan circulationMaxRefreshInterval = TimeSpan.FromSeconds(500);
         TimeSpan rotationMaxRefreshInterval = TimeSpan.FromSeconds(500);
         TimeSpan hoistingMaxRefreshInterval = TimeSpan.FromSeconds(500);
@@ -108,10 +110,13 @@ public class openLabADCS : IHostedService
         DateTime hoistingLostCommunicationLastUpdate = DateTime.MinValue;
         DateTime slipsLostCommunicationLastUpdate = DateTime.MinValue;
         DateTime messageLostCommunicationLastUpdate = DateTime.MinValue;
+       
 
         while (await timer.WaitForNextTickAsync())
         {
             DateTime now = DateTime.UtcNow;
+            TimeSpan deltat = now - lastTimeStamp;
+            lastTimeStamp = now;
             bool? hoistingRequested, circulationRequested, rotationRequested;
 
             double? requestedHoistingSpeed,requestedRotationSpeed, requestedCirculationSpeed,  requestedHoistingAccelerationLimit, requestedRotationAccelerationLimit, requestedCirculationAccelerationLimit;
@@ -121,8 +126,10 @@ public class openLabADCS : IHostedService
 
             double actualHoistingSpeed, actualRotationSpeed, actualCirculationSpeed;
             double tj1;
+            double openiBOPStatus;
             
             bool? inComingWOBTaraCommand, inComingTOBTaraCommand;
+            bool requestediBOPOpen = false;
             double hookload, sft;
             short circulationHeartBeat, rotationHeartBeat, hoistHeartBeat, slipsHeartBeat, messageHeartBeat;
             lock (LowLevelInterfaceOutSignals)
@@ -132,6 +139,7 @@ public class openLabADCS : IHostedService
                 hoistHeartBeat = LowLevelInterfaceOutSignals.HoistingHeartBeat;
                 slipsHeartBeat = LowLevelInterfaceOutSignals.SlipsHeartBeat;
                 messageHeartBeat = LowLevelInterfaceOutSignals.MessageHeartBeat;
+                openiBOPStatus = LowLevelInterfaceOutSignals.OpeniBOPStatus;
             }
 
             lock (LowLevelInterfaceInSignals) 
@@ -150,6 +158,10 @@ public class openLabADCS : IHostedService
 
                 inComingWOBTaraCommand = LowLevelInterfaceInSignals.RequestedZeroWOB;
                 inComingTOBTaraCommand = LowLevelInterfaceInSignals.RequestedZeroTorque;
+                if (LowLevelInterfaceInSignals.RequestedOpenIBOP != null)
+                {
+                    requestediBOPOpen = LowLevelInterfaceInSignals.RequestedOpenIBOP.Value;
+                }
             }
 
             bool circulationLostCommunication = false;
@@ -294,6 +306,26 @@ public class openLabADCS : IHostedService
                 tj1 = LowLevelInterfaceOutSignals.ToolJoint1Elevation;
             }
 
+            if (requestediBOPOpen)
+            {
+                openiBOPStatus += iBOPOpeningSpeed * deltat.TotalSeconds;
+                if (openiBOPStatus > 1)
+                {
+                    openiBOPStatus = 1;
+                }
+            }
+            else
+            {
+                openiBOPStatus += iBOPOpeningSpeed * deltat.TotalSeconds;
+                if (openiBOPStatus < 0)
+                {
+                    openiBOPStatus = 0;
+                }
+            }
+            lock (LowLevelInterfaceOutSignals)
+            {
+                LowLevelInterfaceOutSignals.OpeniBOPStatus = openiBOPStatus;
+            }
             if (inComingWOBTaraCommand != null && inComingWOBTaraCommand.Value && !wobTaraCommand)
             {
                 taraHookload = hookload;
