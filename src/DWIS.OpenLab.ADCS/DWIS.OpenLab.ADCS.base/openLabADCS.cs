@@ -54,15 +54,15 @@ public class openLabADCS : IHostedService
         foreach (var prop in props) 
         {
             string name = prop.Name;
-            if (prop.PropertyType == typeof(double))
+            if (prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?))
             {
                 manifestFile.ProvidedVariables.Add(new ProvidedVariable() { DataType = "double", VariableID = name });
             }
-            else if (prop.PropertyType == typeof(short))
+            else if (prop.PropertyType == typeof(short) || prop.PropertyType == typeof(short?))
             {
                 manifestFile.ProvidedVariables.Add(new ProvidedVariable() { DataType = "short", VariableID = name });
             }
-            else if (prop.PropertyType == typeof(bool)) 
+            else if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?)) 
             {
                 manifestFile.ProvidedVariables.Add(new ProvidedVariable() { DataType = "bool", VariableID = name });
             }
