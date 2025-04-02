@@ -285,6 +285,8 @@ namespace DWIS.OpenLab.DDHubReplicator
                 _logger?.LogWarning("Untrusted Certificate rejected. Subject = {0}", e.Certificate.Subject);
             }
         }
+        protected List<Mapping?> _mappingIns = new List<Mapping?>();
+        protected List<Mapping?> _mappingOuts = new List<Mapping?>();
         protected List<NodeId?> _nodeIDsInDDHub = new List<NodeId?>();
         protected List<NodeId?> _nodeIDsOutDDHub = new List<NodeId?>();
         protected List<NodeId?> _nodeIDsInBlackboard = new List<NodeId?>();
@@ -332,10 +334,12 @@ namespace DWIS.OpenLab.DDHubReplicator
                                     string varname = "ns=" + nsi + ";s=" + mapping.idDDHub;
                                     NodeId nodeID = new NodeId(varname);
                                     _nodeIDsInDDHub.Add(nodeID);
+                                    _mappingIns.Add(mapping);
                                 }
                                 else
                                 {
                                     _nodeIDsInDDHub.Add(null);
+                                    _mappingIns.Add(null);
                                 }
                                 nsi = -1;
                                 if (!string.IsNullOrEmpty(mapping.nsBlackboard))
@@ -407,10 +411,12 @@ namespace DWIS.OpenLab.DDHubReplicator
                                     string varname = "ns=" + nsi + ";s=" + mapping.idDDHub;
                                     NodeId nodeID = new NodeId(varname);
                                     _nodeIDsOutDDHub.Add(nodeID);
+                                    _mappingOuts.Add(mapping);
                                 }
                                 else
                                 {
                                     _nodeIDsOutDDHub.Add(null);
+                                    _mappingOuts.Add(null);
                                 }
                                 nsi = -1;
                                 if (!string.IsNullOrEmpty(mapping.nsBlackboard))
@@ -476,14 +482,6 @@ namespace DWIS.OpenLab.DDHubReplicator
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            string sparql = string.Empty;
-            sparql += @"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" + Environment.NewLine;
-            sparql += @"PREFIX ddhub: <http://ddhub.no/>" + Environment.NewLine;
-            sparql += @"SELECT ?signal " + Environment.NewLine;
-            sparql += @"WHERE {" + Environment.NewLine;
-            sparql += @"			?dataPoint ddhub:HasDynamicValue ?signal ." + Environment.NewLine;
-            sparql += @"			?dataPoint rdf:type ddhub:FlowRateIn ." + Environment.NewLine;
-            sparql += @"}" + Environment.NewLine;
 
             if (Configuration != null)
             {
@@ -502,7 +500,9 @@ namespace DWIS.OpenLab.DDHubReplicator
                     _nodeIDsInDDHub.Count == _placeHoldersInBlackboard.Count && 
                     _nodeIDsOutDDHub.Count == _placeHoldersOutBlackboard.Count &&
                     _displayIn.Count == _nodeIDsInBlackboard.Count &&
-                    _displayOut.Count == _nodeIDsOutBlackboard.Count
+                    _displayOut.Count == _nodeIDsOutBlackboard.Count &&
+                    _mappingIns.Count == _nodeIDsInDDHub.Count &&
+                    _mappingOuts.Count == _nodeIDsOutDDHub.Count
                     )
                 {
                     PeriodicTimer timer = new PeriodicTimer(_loopSpan);
@@ -528,7 +528,14 @@ namespace DWIS.OpenLab.DDHubReplicator
                                                     (string nameSpace, string id, object value, DateTime sourceTimestamp)[] outputs = new (string nameSpace, string id, object value, DateTime sourceTimestamp)[1];
                                                     outputs[0].nameSpace = _nameSpacesBlackboard[_nodeIDsInBlackboard![i]!.NamespaceIndex];
                                                     outputs[0].id = (string)_nodeIDsInBlackboard![i]!.Identifier;
-                                                    outputs[0].value = val.Value;
+                                                    if (val.Value is double dval && _mappingIns[i] != null)
+                                                    {
+                                                        outputs[0].value = _mappingIns[i]!.ConversionFactor * (dval + _mappingIns[i]!.ConversionPreOffset) + _mappingIns[i]!.ConversionPostOffset;
+                                                    }
+                                                    else
+                                                    {
+                                                        outputs[0].value = val.Value;
+                                                    }
                                                     outputs[0].sourceTimestamp = DateTime.UtcNow;
                                                     _DWISClient!.UpdateAnyVariables(outputs);
                                                 }
@@ -543,7 +550,14 @@ namespace DWIS.OpenLab.DDHubReplicator
                                                 (string nameSpace, string id, object value, DateTime sourceTimestamp)[] outputs = new (string nameSpace, string id, object value, DateTime sourceTimestamp)[1];
                                                 outputs[0].nameSpace = node.NameSpace;
                                                 outputs[0].id = node.ID;
-                                                outputs[0].value = val.Value;
+                                                if (val.Value is double dval && _mappingIns[i] != null)
+                                                {
+                                                    outputs[0].value = _mappingIns[i]!.ConversionFactor * (dval + _mappingIns[i]!.ConversionPreOffset) + _mappingIns[i]!.ConversionPostOffset;
+                                                }
+                                                else
+                                                {
+                                                    outputs[0].value = val.Value;
+                                                }
                                                 outputs[0].sourceTimestamp = DateTime.UtcNow;
                                                 _DWISClient!.UpdateAnyVariables(outputs);
                                             }
@@ -575,6 +589,10 @@ namespace DWIS.OpenLab.DDHubReplicator
                                                 DataValue? val = ((DWISClientOPCF)_DWISClient!).ReadValue(_nodeIDsOutBlackboard![i]!);
                                                 if (val != null && _nodeIDsOutDDHub[i] != null)
                                                 {
+                                                    if (val.Value is double dval && _mappingOuts[i] != null)
+                                                    {
+                                                            val.Value = _mappingOuts[i]!.ConversionFactor * (dval + _mappingOuts[i]!.ConversionPreOffset) + _mappingOuts[i]!.ConversionPostOffset;
+                                                    }
                                                     WriteValue writeValue = new WriteValue
                                                     {
                                                         NodeId = _nodeIDsOutDDHub[i],
@@ -604,6 +622,10 @@ namespace DWIS.OpenLab.DDHubReplicator
                                                 DataValue? val = ((DWISClientOPCF)_DWISClient!).ReadValue(n);
                                                 if (val != null && _nodeIDsOutDDHub[i] != null)
                                                 {
+                                                    if (val.Value is double dval && _mappingOuts[i] != null)
+                                                    {
+                                                        val.Value = _mappingOuts[i]!.ConversionFactor * (dval + _mappingOuts[i]!.ConversionPreOffset) + _mappingOuts[i]!.ConversionPostOffset;
+                                                    }
                                                     WriteValue writeValue = new WriteValue
                                                     {
                                                         NodeId = _nodeIDsOutDDHub[i],

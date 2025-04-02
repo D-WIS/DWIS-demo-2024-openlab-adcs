@@ -13,7 +13,7 @@ public class BasicController
 
     private ushort _setPointNamespaceIndex;
     private string _setPointIdentifier;
-    private TimeSpan _loopSpan = TimeSpan.FromMilliseconds(100);
+    private TimeSpan _loopSpan = TimeSpan.FromMilliseconds(150);
 
 
     public double MinimumSetPoint { get; set; }
@@ -114,8 +114,12 @@ public class BasicController
         PeriodicTimer periodicTimer = new PeriodicTimer(_loopSpan);
         try
         {
+            DateTime lastUpdate = DateTime.UtcNow;
             while (await periodicTimer.WaitForNextTickAsync())
             {
+                DateTime now = DateTime.UtcNow;
+                TimeSpan elapsed = now- lastUpdate;
+                lastUpdate = now;
                 double currentValue = GetActualValue();
                 double currentSetPoint = GetSetPoint();
                 double rateOfChange = GetRateOfChangeSetPoint();
@@ -150,9 +154,7 @@ public class BasicController
                         rateOfChange = absoluteRateOfChange;
                     }
 
-
-                    double command = currentValue + rateOfChange * _loopSpan.TotalSeconds;  //not sure this will provide the right acceleration...
-
+                    double command = currentValue + rateOfChange * elapsed.TotalSeconds;  //not sure this will provide the right acceleration...
 
                     SetCommand(command);
 

@@ -8,19 +8,59 @@
       "idDDHub": "LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured",
       "nsBlackboard": "http://ddhub.no/openLAB/Variables/",
       "idBlackboard": "openLAB.FlowRateIn",
-      "SparQL": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX ddhub: <http://ddhub.no/>\r\nSELECT ?signal \r\nWHERE {\r\n\t\t\t?dataPoint ddhub:HasDynamicValue ?signal .\r\n\t\t\t?dataPoint rdf:type ddhub:FlowRateIn .\r\n}\r\n",
-      "Display": true
+      "SparQL": null,
+      "Display": false
+    },
+    {
+      "nsDDHub": "http://ddhub.no/LowLevelInterfaceOutSignals/Variables/",
+      "idDDHub": "LowLevelInterfaceOutSignals.ActualHoistingSpeedMeasured",
+      "nsBlackboard": "http://ddhub.no/openLAB/Variables/",
+      "idBlackboard": "openLAB.HookVelocity",
+      "SparQL": null,
+      "Display": false
+    },
+    {
+      "nsDDHub": "http://ddhub.no/LowLevelInterfaceOutSignals/Variables/",
+      "idDDHub": "LowLevelInterfaceOutSignals.ActualRotationSpeedMeasured",
+      "nsBlackboard": "http://ddhub.no/openLAB/Variables/",
+      "idBlackboard": "openLAB.SurfaceRPM",
+      "SparQL": null,
+      "Display": false
+    },
+    {
+      "nsDDHub": "http://ddhub.no/LowLevelInterfaceOutSignals/Variables/",
+      "idDDHub": "LowLevelInterfaceOutSignals.MeasuredHookload",
+      "nsBlackboard": "http://ddhub.no/openLAB/Variables/",
+      "idBlackboard": "openLAB.HookLoad",
+      "SparQL": null,
+      "Display": false
+    },
+    {
+      "nsDDHub": "http://ddhub.no/LowLevelInterfaceOutSignals/Variables/",
+      "idDDHub": "LowLevelInterfaceOutSignals.MeasuredRotationTorque",
+      "nsBlackboard": "http://ddhub.no/openLAB/Variables/",
+      "idBlackboard": "openLAB.SurfaceTorque",
+      "SparQL": null,
+      "Display": false
+    },
+    {
+      "nsDDHub": "http://ddhub.no/LowLevelInterfaceOutSignals/Variables/",
+      "idDDHub": "LowLevelInterfaceOutSignals.MeasuredStandPipePressure",
+      "nsBlackboard": "http://ddhub.no/openLAB/Variables/",
+      "idBlackboard": "openLAB.SPP",
+      "SparQL": null,
+      "Display": false
+    },
+    {
+      "nsDDHub": "http://ddhub.no/LowLevelInterfaceOutSignals/Variables/",
+      "idDDHub": "LowLevelInterfaceOutSignals.MeasuredSWOB",
+      "nsBlackboard": "http://ddhub.no/openLAB/Variables/",
+      "idBlackboard": "openLAB.WOB",
+      "SparQL": null,
+      "Display": false
     }
   ],
   "MappingOut": [
-    {
-      "nsDDHub": "http://ddhub.no/LowLevelInterfaceInSignals/Variables/",
-      "idDDHub": "LowLevelInterfaceInSignals.RequestedCirculationFlowRate",
-      "nsBlackboard": "http://ddhub.no/LowLevelInterfaceInSignals/Variables/",
-      "idBlackboard": "LowLevelInterfaceInSignals.RequestedCirculationFlowRate",
-      "SparQL": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX ddhub: <http://ddhub.no/>\r\nSELECT ?signal \r\nWHERE {\r\n\t\t\t?dataPoint ddhub:HasDynamicValue ?signal .\r\n\t\t\t?dataPoint rdf:type ddhub:FlowRateIn .\r\n}\r\n",
-      "Display": true
-    }
   ],
   "Browse": false
 }

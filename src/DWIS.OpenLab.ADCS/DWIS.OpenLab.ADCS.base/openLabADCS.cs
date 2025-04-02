@@ -316,7 +316,7 @@ public class openLabADCS : IHostedService
             }
             else
             {
-                openiBOPStatus += iBOPOpeningSpeed * deltat.TotalSeconds;
+                openiBOPStatus -= iBOPOpeningSpeed * deltat.TotalSeconds;
                 if (openiBOPStatus < 0)
                 {
                     openiBOPStatus = 0;
