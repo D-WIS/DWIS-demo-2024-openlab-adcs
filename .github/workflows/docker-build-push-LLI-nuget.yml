@@ -1,0 +1,23 @@
+name: Build and Push Docker LLI Package
+
+on:
+  workflow_dispatch:
+  #push:
+    #branches: [ "main" ]
+
+jobs:
+
+  build:
+  
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4     
+        
+    - name: Pack-and-push
+      run: |
+        dotnet pack ${{github.workspace}}/src/DWIS.OpenLab.ADCS/DWIS.OpenLab.ADCS.LowLevelInterfaceClient/DWIS.OpenLab.ADCS.LowLevelInterfaceClient.csproj -p:PackageVersion=2.0."${{ github.run_number }}" --output ${{github.workspace}}/pkg
+        cd ${{github.workspace}}/pkg
+        dotnet nuget push "*.nupkg" -k ${NUGET_SECRET_API} -s https://api.nuget.org/v3/index.json --skip-duplicate
+        
