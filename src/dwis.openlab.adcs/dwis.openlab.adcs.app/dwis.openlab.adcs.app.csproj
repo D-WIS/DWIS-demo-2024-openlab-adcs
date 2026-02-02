@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DWIS.Client.ReferenceImplementation.OPCFoundation" Version="2.2.12" />
+    <PackageReference Include="DWIS.Client.ReferenceImplementation.OPCFoundation" Version="2.2.42" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.3" />
@@ -24,6 +24,9 @@
 
   <ItemGroup>
     <Content Update="C:\Users\beda\.nuget\packages\dwis.client.referenceimplementation.opcfoundation\2.2.12\contentFiles\any\net8.0\config\Quickstarts.ReferenceClient.Config.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="C:\Users\beda\.nuget\packages\dwis.client.referenceimplementation.opcfoundation\2.2.42\contentFiles\any\net8.0\config\Quickstarts.ReferenceClient.Config.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
