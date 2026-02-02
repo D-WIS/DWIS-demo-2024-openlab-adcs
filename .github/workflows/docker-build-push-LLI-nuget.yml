@@ -10,7 +10,8 @@ jobs:
   build:
   
     runs-on: ubuntu-latest
-    
+    env:
+      NUGET_SECRET_API: ${{ secrets.NUGET_SECRET_API }}
     steps:
     - name: Check out code
       uses: actions/checkout@v4     
