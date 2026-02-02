@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DWIS.OpenLab.ADCS.Base" Version="1.0.4" />
+    <ProjectReference Include="..\dwis.openlab.adcs.base\DWIS.OpenLab.ADCS.Base.csproj" />
   </ItemGroup>
 
   <ItemGroup>
