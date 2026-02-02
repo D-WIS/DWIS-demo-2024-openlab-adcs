@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DWIS.Client.ReferenceImplementation" Version="2.2.16" />
+    <PackageReference Include="DWIS.Client.ReferenceImplementation" Version="2.2.42" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
 

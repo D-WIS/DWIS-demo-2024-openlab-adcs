@@ -77,8 +77,6 @@ if (File.Exists(openLabManifestPath))
 
 Console.ReadLine();
 
-
-
  List<(InjectionMapping injectionMapping, PropertyInfo llOutProperty)> BuildMapping(ManifestInjectionResult injectionResult) 
 {
     List<(InjectionMapping injectionMapping, PropertyInfo llOutProperty)> mapping = new List<(InjectionMapping injectionMapping, PropertyInfo llOutProperty)>();
