@@ -51,7 +51,7 @@ DWISClientOPCF dwisClient = new DWISClientOPCF(conf, loggerFactory.CreateLogger<
 
 
 
-LowLevelInterfaceClient LLIClient = new LowLevelInterfaceClient(dwisClient, null, null, null);
+LowLevelInterfaceClient LLIClient = new LowLevelInterfaceClient(dwisClient);
 
 
 

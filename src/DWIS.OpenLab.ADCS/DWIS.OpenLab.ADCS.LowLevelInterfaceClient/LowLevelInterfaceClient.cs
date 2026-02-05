@@ -156,11 +156,11 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
                     {
                         if (nsIndex > 0)
                         {
-                            _inSignalsDictionary.Add(propInfo, (iv.InjectedID.ID, iv.InjectedID.NameSpaceIndex));
+                            _inSignalsDictionary.Add(propInfo, (iv.InjectedID.ID, nsIndex));
                         }
                         else
                         {
-                            _inSignalsDictionary.Add(propInfo, (iv.InjectedID.ID, nsIndex));
+                            _inSignalsDictionary.Add(propInfo, (iv.InjectedID.ID, iv.InjectedID.NameSpaceIndex ));
                         }
                     }
                 }
