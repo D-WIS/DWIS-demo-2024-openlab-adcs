@@ -83,7 +83,15 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             {
                 _dwisClient.GetNameSpaceIndex(outSignalsNamespace, out nsIndex);
             }
-            Type type = typeof(LowLevelInterfaceOutSignals);
+            else
+            {
+                if (!string.IsNullOrEmpty(outSignalsInjectionResults.ProvidedVariablesNamespace))
+                {
+                    _dwisClient.GetNameSpaceIndex(outSignalsInjectionResults.ProvidedVariablesNamespace, out nsIndex);
+                }
+            }
+
+                Type type = typeof(LowLevelInterfaceOutSignals);
             foreach (var v in outSignalsInjectionResults.ProvidedVariables)
             {
                 if (v != null)
@@ -91,7 +99,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
                     PropertyInfo? prop = type.GetProperty(v.ManifestItemID);
                     if (prop != null)
                     {
-                        if (!useFileNamespaceIndex)
+                        if (nsIndex > 0)
                         {
                             _dwisClient.Subscribe(prop, SubscriptionDataChanged, new (ushort, string, object)[] { new(nsIndex, v.InjectedID.ID, prop) });
                         }
@@ -99,6 +107,10 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
                         {
                             _dwisClient.Subscribe(prop, SubscriptionDataChanged, new (ushort, string, object)[] { new(v.InjectedID.NameSpaceIndex, v.InjectedID.ID, prop) });
                         }
+                        //if (!useFileNamespaceIndex)
+                        //{
+                        //    _dwisClient.Subscribe(prop, SubscriptionDataChanged, new (ushort, string, object)[] { new(nsIndex, v.InjectedID.ID, prop) });
+                        //}
                     }
                 }
             }

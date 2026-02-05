@@ -209,6 +209,11 @@ public class openLabADCS : IHostedService
             // elapsed = now - messageLastUpdate;
             // messageLostCommunication = elapsed > messageMaxRefreshInterval;
 
+            //quick hack, the heart beat do not seem to be updated.
+            circulationLostCommunication = false;
+            rotationLostCommunication = false;
+            hoistingLostCommunication = false;         
+
             if (circulationLostCommunication)
             {
                 if (now - circulationLostCommunicationLastUpdate > lostCommunicationMessageMaxRefreshInterval)
@@ -299,7 +304,7 @@ public class openLabADCS : IHostedService
             lock (LowLevelInterfaceOutSignals) 
             {
                 actualHoistingSpeed = LowLevelInterfaceOutSignals.ActualHoistingSpeedMeasured;
-                actualRotationSpeed = LowLevelInterfaceOutSignals.ActualRotationSpeedMeasured;
+                actualRotationSpeed = LowLevelInterfaceOutSignals.ActualRotationSpeedMeasured;//rad / sec
                 actualCirculationSpeed = LowLevelInterfaceOutSignals.ActualCirculationSpeedMeasured;
                 hookload = LowLevelInterfaceOutSignals.MeasuredHookload;
                 sft = LowLevelInterfaceOutSignals.MeasuredRotationTorque;
@@ -347,12 +352,15 @@ public class openLabADCS : IHostedService
             LowLevelInterfaceOutSignals.MeasuredSWOB = taraHookload - hookload;
 
             DrillingControlSystem.DrawworkController.SetActualValue(actualHoistingSpeed);
-            DrillingControlSystem.TopdriveController.SetActualValue(actualRotationSpeed);
+            DrillingControlSystem.TopdriveController.SetActualValue(actualRotationSpeed /(2* System.Math.PI));
             DrillingControlSystem.MudpumpsController.SetActualValue(actualCirculationSpeed);
 
             LowLevelInterfaceOutSignals.HoistingControlGranted = hoistingRequested != null &&  hoistingRequested.Value && !hoistingLostCommunication;//make more advanced, with validation.
             LowLevelInterfaceOutSignals.RotationControlGranted = rotationRequested != null && rotationRequested.Value && !rotationLostCommunication;
             LowLevelInterfaceOutSignals.CirculationControlGranted = circulationRequested != null && circulationRequested.Value && !circulationLostCommunication;
+
+
+
 
 
             if (_acquiredDrillerSignals != null && _acquiredDrillerSignals[_drillerTOSVelocitySPTag].Any())
@@ -388,7 +396,7 @@ public class openLabADCS : IHostedService
             //rotation
             if (LowLevelInterfaceOutSignals.RotationControlGranted && requestedRotationSpeed != null && requestedRotationAccelerationLimit != null)
             {
-                DrillingControlSystem.TopdriveController.SetSetPoint(requestedRotationSpeed.Value);
+                DrillingControlSystem.TopdriveController.SetSetPoint(requestedRotationSpeed.Value / (2 * System.Math.PI));//hardcode a conversion...
                 if (actualRotationSpeed > requestedRotationSpeed)
                 {
                     DrillingControlSystem.TopdriveController.SetRateOfChangeSetPoint(-requestedRotationAccelerationLimit.Value);
@@ -400,7 +408,7 @@ public class openLabADCS : IHostedService
             }
             else
             {
-                DrillingControlSystem.TopdriveController.SetSetPoint(drillerRotationSpeed);
+                DrillingControlSystem.TopdriveController.SetSetPoint(drillerRotationSpeed);//see if the conversion is also required
                 DrillingControlSystem.TopdriveController.SetRateOfChangeSetPoint(double.NaN);
             }
 

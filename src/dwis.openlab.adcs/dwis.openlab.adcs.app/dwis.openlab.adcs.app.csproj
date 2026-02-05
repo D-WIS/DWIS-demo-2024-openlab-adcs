@@ -31,4 +31,13 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="signalsInInjectionResults.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="signalsOutInjectionResults.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

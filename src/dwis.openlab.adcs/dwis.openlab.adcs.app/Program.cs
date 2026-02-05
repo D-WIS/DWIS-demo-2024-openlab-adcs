@@ -1,11 +1,12 @@
 ﻿using dwis.openlab.adcs.Base;
-using DWIS.OpenLab.ADCS.LowLevelInterfaceClient;
 using DWIS.Client.ReferenceImplementation.OPCFoundation;
+using DWIS.OpenLab.ADCS.LowLevelInterfaceClient;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using System.CommandLine;
 using Opc.Ua;
+using Org.BouncyCastle.Tls;
+using System.CommandLine;
 
 string url = string.Empty;
 string inSignalsNamespace = string.Empty;
@@ -37,16 +38,22 @@ var logger = loggerFactory.CreateLogger<Program>();
 LowLevelInterfaceInSignals lowLevelInterfaceInSignals = new LowLevelInterfaceInSignals();
 
 var conf = new DWIS.Client.ReferenceImplementation.DefaultDWISClientConfiguration();
-if (!string.IsNullOrEmpty(url))
-{
-    conf.ServerAddress = url;
-}
-else
-{
-    conf.ServerAddress = "opc.tcp://10.120.34.103:4840";
-}
+//if (!string.IsNullOrEmpty(url))
+//{
+//    conf.ServerAddress = url;
+//}
+//else
+//{
+//    conf.ServerAddress = "opc.tcp://10.120.34.103:4840";
+//}
 
 DWISClientOPCF dwisClient = new DWISClientOPCF(conf, loggerFactory.CreateLogger<DWISClientOPCF>());
+
+
+
+LowLevelInterfaceClient LLIClient = new LowLevelInterfaceClient(dwisClient, null, null, null);
+
+
 
 bool useFileNamespaceIndexes = string.IsNullOrEmpty(inSignalsNamespace) || string.IsNullOrEmpty(outSignalsNamespace);
 
