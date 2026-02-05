@@ -1,4 +1,4 @@
-name: Build and Push Docker LLI Package
+name: Build and Push Nuget LLI Package
 
 on:
   workflow_dispatch:
