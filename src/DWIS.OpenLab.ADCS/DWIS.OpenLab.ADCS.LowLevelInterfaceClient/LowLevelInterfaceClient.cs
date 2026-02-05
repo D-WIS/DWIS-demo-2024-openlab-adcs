@@ -139,6 +139,13 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
             {
                 _dwisClient.GetNameSpaceIndex(inSignalsNamespace, out nsIndex);
             }
+            else
+            {
+                if (!string.IsNullOrEmpty(inSignalsInjectionResults.ProvidedVariablesNamespace))
+                {
+                    _dwisClient.GetNameSpaceIndex(inSignalsInjectionResults.ProvidedVariablesNamespace, out nsIndex);
+                }
+            }
             Type type = typeof(LowLevelInterfaceInSignals); 
             foreach (var iv in inSignalsInjectionResults.ProvidedVariables) 
             {
@@ -147,7 +154,7 @@ namespace DWIS.OpenLab.ADCS.LowLevelInterfaceClient
                     PropertyInfo? propInfo = type.GetProperty(iv.ManifestItemID);
                     if (propInfo != null)
                     {
-                        if (useFileNamespaceIndex)
+                        if (nsIndex > 0)
                         {
                             _inSignalsDictionary.Add(propInfo, (iv.InjectedID.ID, iv.InjectedID.NameSpaceIndex));
                         }
